@@ -1,0 +1,29 @@
+{
+  "name": "hdg-chatbot",
+  "version": "",
+  "scripts": {
+    "build": "tsc",
+    "build:production": "npm run prestart && npm prune --production",
+    "watch": "tsc --w",
+    "prestart": "npm run build && func extensions install",
+    "start:host": "func start",
+    "start": "npm-run-all --parallel start:host watch",
+    "test": "echo \"No tests yet...\"",
+    "prengrok-host": "npm run build",
+    "ngrok-host": "func host start --port 8080",
+    "ngrok": "ngrok http 8080"
+  },
+  "description": "",
+  "devDependencies": {
+    "@azure/functions": "^1.0.1-beta1",
+    "ngrok": "^3.4.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^3.3.3"
+  },
+  "dependencies": {
+    "@types/qs": "^6.9.5",
+    "@types/twilio": "^2.11.0",
+    "qs": "^6.9.6",
+    "twilio": "^3.55.0"
+  }
+}
