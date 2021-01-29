@@ -1,25 +1,24 @@
-import { AzureFunction, Context, HttpRequest } from "@azure/functions"
-import * as twilio from 'twilio'
-import * as qs from 'qs'
+import { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import * as twilio from 'twilio';
+import * as qs from 'qs';
 
-const MessagingResponse = twilio.twiml.MessagingResponse
+const MessagingResponse = twilio.twiml.MessagingResponse;
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
-    const sentMessage = qs.parse(req.body)
+    const sentMessage = qs.parse(req.body);
 
-    const message = new MessagingResponse()
-    message.message("you said " + sentMessage.Body)
+    const message = new MessagingResponse();
+    message.message('you said ' + sentMessage.Body);
 
     context.res = {
         // status: 200, /* Defaults to 200 */
         body: message.toString(),
         headers: { 'Content-Type': 'application/xml' },
-        isRaw: true
+        isRaw: true,
     };
 
-    context.done()
-
+    context.done();
 };
 
 export default httpTrigger;
