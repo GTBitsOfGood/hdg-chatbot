@@ -1,8 +1,8 @@
 const ChatbotMessageSchema = new Schema({
   body: { type: String, required: true },
-  images: { type: Array, required: false },
-  nextMessages: { type: Array, required: true },
-  previousMessage: { type: String, required: true },
+  images: { type: [{url: String}], required: false },
+  nextMessages: { type: [{type: Schema.ObjectId, ref: 'ChatbotMessage'}], required: true },
+  previousMessage: { type: {type: Schema.ObjectId, ref: 'ChatbotMessage'}, required: true },
   module: { type: String, required: true } 
 });
 
