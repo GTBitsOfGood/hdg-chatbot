@@ -18,6 +18,8 @@
   "devDependencies": {
     "@azure/functions": "^1.0.1-beta1",
     "@types/mongoose": "^5.10.3",
+    "@types/qs": "^6.9.5",
+    "@types/twilio": "^2.11.0",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
     "eslint": "^7.18.0",
@@ -31,8 +33,6 @@
     "typescript": "^3.3.3"
   },
   "dependencies": {
-    "@types/qs": "^6.9.5",
-    "@types/twilio": "^2.11.0",
     "azure-functions-core-tools": "^3.0.3233",
     "mongoose": "^5.11.15",
     "qs": "^6.9.6",
