@@ -1,9 +1,8 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose, { Schema } from 'mongoose';
 
 const UserStateSchema = new Schema({
     userId: { type: String, required: true, unique: true },
-    currMessage: { type: { type: Schema.ObjectId, ref: 'ChatbotMessage' }, required: true },
+    currMessage: { type: { type: Schema.Types.ObjectId, ref: 'ChatbotMessage' }, required: true },
     split: { type: Boolean, required: false },
 });
 
