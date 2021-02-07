@@ -1,6 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import * as twilio from 'twilio';
-import * as qs from 'qs';
+import qs from 'qs';
 
 const MessagingResponse = twilio.twiml.MessagingResponse;
 
