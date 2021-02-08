@@ -2,11 +2,11 @@ import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import * as twilio from 'twilio';
 import * as qs from 'qs';
 import MongoConnect from './db';
-import UserState from '../models/UserState';
+//import UserState from '../models/UserState';
 
 const MessagingResponse = twilio.twiml.MessagingResponse;
 
-const getUserState = async function (req: HttpRequest):  Promise<UserState> {
+const getUserState = async function (req: HttpRequest):  Promise<void> {
     const body = qs.parse(req.body);
 
     // do necessary processing on the request (nothing at this point)
