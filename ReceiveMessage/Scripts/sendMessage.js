@@ -5,13 +5,14 @@ import MongoConnect from './db';
 import UserState from '../models/UserState';
 import ChatbotMessage from '../models/ChatbotMessage';
 
-const formResponse = async function(state, message) {
-    const p = state.currMessage;
+const formResponse = async function (state, message) {
+    const p = state.currentMessage;
     await MongoConnect();
     const prev = await ChatbotMessage.findById(p);
     const map = prev.nextMessages;
-    const response = map.get(message);
-    return response;
-}
-    
+    const nextChatbotMessageId = map.get(message);
+    const response = await ChatbotMessage.findById(nextChatbotMessageId);
+    return response.body;
+};
+
 export default formResponse;
