@@ -11,6 +11,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     const userState = await readUserRequest(req);
     context.log(userState);
+    context.log(sentMessage);
 
     const message = new MessagingResponse();
     message.message('you said ' + sentMessage.Body);
