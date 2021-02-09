@@ -1,13 +1,17 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import * as twilio from 'twilio';
 import qs from 'qs';
+import readUserRequest from './Scripts/readRequest';
 
 const MessagingResponse = twilio.twiml.MessagingResponse;
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.');
     const sentMessage = qs.parse(req.body);
-    //delete meeeeee
+
+    const userState = await readUserRequest(req);
+    context.log(userState);
+
     const message = new MessagingResponse();
     message.message('you said ' + sentMessage.Body);
 
