@@ -6,6 +6,8 @@ const ChatbotMessageSchema = new Schema({
     nextMessages: { type: Map, of: { type: Schema.Types.ObjectId, ref: 'ChatbotMessage' }, required: true },
     previousMessage: { type: Schema.Types.ObjectId, ref: 'ChatbotMessage', required: false },
     module: { type: String, required: true },
+    isQuestion: {type: Boolean, required: false},
+    lowData: {type: String, required: true},
 });
 
 export default mongoose.model('ChatbotMessage', ChatbotMessageSchema);
