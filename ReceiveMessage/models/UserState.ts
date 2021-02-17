@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document } from 'mongoose';
-import ChatbotMessage;
+import {IMessage} from './ChatbotMessage';
 
 export interface State extends Document {
     userId: string;
-    currMessage: ChatbotMessage;
+    currMessage: IMessage['_id'];
     completedModules: Array <number>;
     split: boolean;
     lowData: boolean;
