@@ -16,15 +16,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     const curUserState = await readUserRequest(req);
     context.log(curUserState);
-    context.log(curUserState.currMessage);
     context.log(sentMessage);
     const response = await formResponse(curUserState, sentMessage.Body);
 
     const message = new MessagingResponse();
     message.message(response);
 
-    //context.log("sentMessage.body" + sentMessage.body);
-    //context.log("curUserState.currMessage" + curUserState.currMessage);
     // if there's a conditional (like not recording all messages), put that here
     storeMessage(sentMessage, curUserState.currMessage);
     
@@ -40,9 +37,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
 const storeMessage = async function (sentMessage:qs.ParsedQs, curMessageID: Schema.Types.ObjectId) {
     const userMessage  = new MessageResponse({
-        accountSID: sentMessage.AccountSid, 
+        accountID: sentMessage.From,
         chatBotMessageID: curMessageID,
-        response: sentMessage.body});
+        response: sentMessage.Body});
     userMessage.save(function (err, mes) {
         if (err) return console.error(err);
         console.log("Saved message to database");
