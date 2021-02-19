@@ -5,6 +5,7 @@ import readUserRequest from './Scripts/readRequest';
 import MessageResponse from './models/MessageResponse';
 import UserState from './models/UserState';
 import { Schema } from 'mongoose';
+import formResponse from './Scripts/sendMessage';
 
 const MessagingResponse = twilio.twiml.MessagingResponse;
 
@@ -15,9 +16,10 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const curUserState = await readUserRequest(req);
     context.log(curUserState);
     context.log(sentMessage);
+    const response = await formResponse(curUserState, sentMessage.Body);
 
     const message = new MessagingResponse();
-    message.message('you said ' + sentMessage.Body);
+    message.message(response);
 
     // if there's a conditional (like not recording all messages), put that here
     // error "currMessage doesn't exist on Document<any>" should go away when UserState becomes strongly typed
