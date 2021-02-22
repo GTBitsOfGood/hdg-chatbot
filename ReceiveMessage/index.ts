@@ -1,7 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import * as twilio from 'twilio';
 import qs from 'qs';
-import readUserRequest from './Scripts/readRequest';
+import getUserState from './Scripts/readRequest';
 import MessageResponse from './models/MessageResponse';
 import UserState from './models/UserState';
 import { Schema } from 'mongoose';
@@ -14,7 +14,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log('HTTP trigger function processed a request.');
     const sentMessage = qs.parse(req.body);
 
-    const curUserState = await readUserRequest(req);
+    const curUserState = await getUserState(req);
     context.log(curUserState);
     context.log(sentMessage);
     const response = await formResponse(curUserState, sentMessage.Body);
@@ -24,26 +24,27 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     // if there's a conditional (like not recording all messages), put that here
     storeMessage(sentMessage, curUserState.currMessage);
-    
+
     context.res = {
         // status: 200, /* Defaults to 200 */ /*
         body: message.toString(),
         headers: { 'Content-Type': 'application/xml' },
         isRaw: true,
     };
-    
+
     context.done();
 };
 
-const storeMessage = async function (sentMessage:qs.ParsedQs, curMessageID: Schema.Types.ObjectId) {
-    const userMessage  = new MessageResponse({
+const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Schema.Types.ObjectId) {
+    const userMessage = new MessageResponse({
         accountID: sentMessage.From,
         chatBotMessageID: curMessageID,
-        response: sentMessage.Body});
+        response: sentMessage.Body,
+    });
     userMessage.save(function (err, mes) {
         if (err) return console.error(err);
-        console.log("Saved message to database");
+        console.log('Saved message to database');
     });
-}
+};
 
 export default httpTrigger;
