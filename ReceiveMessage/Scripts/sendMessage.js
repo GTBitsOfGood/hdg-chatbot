@@ -12,6 +12,7 @@ const formResponse = async function (state, message) {
     const map = prev.nextMessages;
     const nextChatbotMessageId = map.get(message);
     const response = await ChatbotMessage.findById(nextChatbotMessageId);
+    state.currMessage = nextChatbotMessageId;
     return response.body;
 };
 
