@@ -41,6 +41,7 @@
   "dependencies": {
     "azure-functions-core-tools": "^3.0.3233",
     "dotenv": "^8.2.0",
+    "login": "^0.8.0",
     "mongoose": "^5.11.15",
     "qs": "^6.9.6",
     "twilio": "^3.55.0"
