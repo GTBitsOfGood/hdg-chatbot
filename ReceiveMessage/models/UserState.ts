@@ -4,10 +4,10 @@ import {IMessage} from './ChatbotMessage';
 export interface State extends Document {
     userId: string;
     currMessage: IMessage['_id'];
-    completedModules: Array <number>;
-    split: boolean;
-    lowData: boolean;
-    completedTimes: Array <Schema.Types.Date>;
+    completedModules?: Array <number>;
+    split?: boolean;
+    lowData?: boolean;
+    completedTimes?: Array <Schema.Types.Date>;
 }
 
 const UserStateSchema = new Schema({
