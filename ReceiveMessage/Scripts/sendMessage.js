@@ -7,6 +7,9 @@ import ChatbotMessage from '../models/ChatbotMessage';
 
 const formResponse = async function (state, message) {
     const p = state.currMessage;
+    if (p == null) {
+        state.currMessage = "Hello!";
+    }
     await MongoConnect();
     const prev = await ChatbotMessage.findById(p['_id']);
     const map = prev.nextMessages;
