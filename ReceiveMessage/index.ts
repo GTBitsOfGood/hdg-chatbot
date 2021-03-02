@@ -24,8 +24,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             const imageResponse = new MessagingResponse();
             const imageMessage = imageResponse.message('');
             imageMessage.media(image);
-
-            storeMessage(sentMessage, curUserState.currMessage);
         });
     }
 
