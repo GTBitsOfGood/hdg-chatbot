@@ -20,7 +20,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const response = await formResponse(curUserState, sentMessage.Body);
 
     const message = new MessagingResponse();
-    message.message(response);
+    message.message(response.body);
 
     // if there's a conditional (like not recording all messages), put that here
     storeMessage(sentMessage, curUserState.currMessage);
