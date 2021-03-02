@@ -2,6 +2,8 @@
   "name": "hdg-chatbot",
   "version": "",
   "scripts": {
+    "migrate:up": "migrate-mongo up",
+    "migrate:down": "migrate-mongo down",
     "build": "tsc",
     "build:production": "npm run prestart && npm prune --production",
     "watch": "tsc --w",

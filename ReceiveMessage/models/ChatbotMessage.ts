@@ -18,7 +18,7 @@ const ChatbotMessageSchema = new Schema({
     previousMessage: { type: Schema.Types.ObjectId, ref: 'ChatbotMessage', required: false },
     module: { type: String, required: true },
     isQuestion: {type: Boolean, required: false},
-    lowData: {type: String, required: true},3
+    lowData: {type: String, required: true},
 });
 
 export default mongoose.model<IMessage>('ChatbotMessage', ChatbotMessageSchema);

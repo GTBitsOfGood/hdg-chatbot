@@ -1,12 +1,13 @@
 // In this file you can configure migrate-mongo
+require('dotenv').config();
 
 const config = {
   mongodb: {
     // TODO Change (or review) the url to your MongoDB:
-    url: "mongodb+srv://hdg:rihA4UHFkuatfdRH@hack4impact.opqks.azure.mongodb.net/hdg?retryWrites=true&w=majority",
+    url: process.env.DB_URL,
 
     // TODO Change this to your database name:
-    databaseName: "hdg",
+    databaseName: process.env.DB_NAME,
 
     options: {
       useNewUrlParser: true, // removes a deprecation warning when connecting
