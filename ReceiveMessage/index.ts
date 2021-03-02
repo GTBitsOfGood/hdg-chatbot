@@ -19,6 +19,16 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log(sentMessage);
     const response = await formResponse(curUserState, sentMessage.Body);
 
+    if (response.images != null) {
+        response.images.forEach(function (image) {
+            const imageResponse = new MessagingResponse();
+            const imageMessage = imageResponse.message('');
+            imageMessage.media(image);
+
+            storeMessage(sentMessage, curUserState.currMessage);
+        });
+    }
+
     const message = new MessagingResponse();
     message.message(response.body);
 
