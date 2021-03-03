@@ -35,6 +35,7 @@
     "fx": "^20.0.2",
     "husky": "^4.3.8",
     "lint-staged": "^10.5.3",
+    "migrate-mongo": "^8.1.4",
     "ngrok": "^3.4.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.2.1",
