@@ -53,10 +53,20 @@ const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Sch
 //checks if a special keyword is in the message sent
 const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState) {
     if (specialMessageIds.has(sentMessage.Body)) {
-        // special handling
-        const responseID = specialMessageIds.get(sentMessage.Body);
-        const responseMessage = await ChatbotMessage.findById([responseID]);
-        const responseString = responseMessage.body;
+        // special message handling
+        const responseString = specialMessageIds.get(sentMessage.Body);
+
+        // update curUserState depending on the specialMessageId
+        if (sentMessage.Body == 'restart') {
+            curUserState.currMessage = '6022178429efc055c8e74e50';
+            await curUserState.save();
+        } else if (sentMessage.Body == 'completed') {
+            // do not update userstate
+            const responseStringCompleted = 'You have completed ' + curUserState.completedModules.length + ' modules.';
+            return responseStringCompleted;
+        }
+
+        // return message text
         return responseString;
     } else {
         // normal handling
