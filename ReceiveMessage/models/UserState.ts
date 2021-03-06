@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose';
 import {IMessage} from './ChatbotMessage';
 
-export interface State extends Document {
+export interface IUserState extends Document {
     userId: string;
     currMessage: IMessage['_id'];
     completedModules: Array <number>;
@@ -21,4 +21,4 @@ const UserStateSchema = new Schema({
     lastActivity: {type: Date}
 });
 
-export default mongoose.model<State>("UserState", UserStateSchema);
+export default mongoose.model<IUserState>("UserState", UserStateSchema);

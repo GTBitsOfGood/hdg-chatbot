@@ -1,8 +1,9 @@
 import { AzureFunction, Context } from "@azure/functions"
 
-import { Schema } from 'mongoose';
 import UserState from '../ReceiveMessage/models/UserState';
 import MongoConnect from '../ReceiveMessage/Scripts/db';
+
+import {sendCompletedMessage, sendInactiveMessage} from './Scripts/sendMessage';
 
 //the timer is currently set to run everyday at our 9AM (10AM in guatemala), can be changed in function.json
 const timerTrigger: AzureFunction = async function (context: Context, myTimer: any): Promise<void> {
@@ -26,29 +27,46 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
     //set to two months ago
     date.setMonth(date.getMonth() - 2);
 
-    const inactive = await findInactiveUsers(date);
+    const inactive = await messageInactiveUsers(date);
     context.log(inactive);
-    const catchup = await findCompletedUsers(date);
+    const catchup = await messageCompletedUsers(date, context);
     context.log(catchup)
 };
 
 //gets users where last activity was exactly 2 months ago
-const findInactiveUsers = async function(date:Date) {
-    return UserState.find({
+const messageInactiveUsers = async function(date:Date) {
+    const allUsers = await UserState.find({
         lastActivity: date
+    });
+    allUsers.forEach(user => {
+        sendInactiveMessage(user.userId, date.toDateString());
     });
 }
 
 //gets users where they completed a module 2 months ago
-const findCompletedUsers = async function (date:Date) {
+const messageCompletedUsers = async function (date:Date, context: Context) {
     let prevDay = new Date(date.toDateString());
     prevDay.setDate(prevDay.getDate()-1);
 
-    return UserState.find({
+    const allUsers = await UserState.find({
         completedTimes: {
             $gte: prevDay,
-            $lte: date
+            $lt: date
         }
+    });
+    allUsers.forEach(user => {
+        const modules = user.completedTimes.map((time, index) => {
+            if (time >= prevDay && time < date) { // module was completed 2 months ago
+                return index;
+            } else {
+                return undefined;
+            }
+        }).filter(x => {
+            // undefined is falsy 
+            // 0 is also falsy so we need the second check to make sure any match at index 0 goes through
+            return (x || x >= 0);
+        })
+        sendCompletedMessage(user.userId, date.toDateString(), modules);
     });
 }
 
