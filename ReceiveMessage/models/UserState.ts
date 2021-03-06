@@ -7,7 +7,8 @@ export interface State extends Document {
     completedModules: Array <number>;
     split: boolean;
     lowData: boolean;
-    completedTimes: Array <Schema.Types.Date>;
+    completedTimes: Array <Date>;
+    lastActivity: Date;
 }
 
 const UserStateSchema = new Schema({
@@ -17,6 +18,7 @@ const UserStateSchema = new Schema({
     split: { type: Boolean, required: false },
     lowData: { type: Boolean},
     completedTimes: {type: Array, "default": [null, null, null, null, null]},
+    lastActivity: {type: Date}
 });
 
 export default mongoose.model<State>("UserState", UserStateSchema);
