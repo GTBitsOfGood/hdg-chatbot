@@ -49,13 +49,13 @@ const messageCompletedUsers = async function (date:Date, context: Context) {
     prevDay.setDate(prevDay.getDate()-1);
 
     const allUsers = await UserState.find({
-        completedTimes: {
+        moduleCompletionTime: {
             $gte: prevDay,
             $lt: date
         }
     });
     allUsers.forEach(user => {
-        const modules = user.completedTimes.map((time, index) => {
+        const modules = user.moduleCompletionTime.map((time, index) => {
             if (time >= prevDay && time < date) { // module was completed 2 months ago
                 return index;
             } else {
