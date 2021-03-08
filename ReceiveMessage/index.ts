@@ -7,6 +7,8 @@ import UserState from './models/UserState';
 import { Schema } from 'mongoose';
 import formResponse from './Scripts/sendMessage';
 import { ConferenceContext } from 'twilio/lib/rest/api/v2010/account/conference';
+import specialMessageIds from './specialMessageIds';
+import ChatbotMessage from './models/ChatbotMessage';
 
 const MessagingResponse = twilio.twiml.MessagingResponse;
 
@@ -17,33 +19,60 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const curUserState = await readUserRequest(req);
     context.log(curUserState);
     context.log(sentMessage);
-    const response = await formResponse(curUserState, sentMessage.Body);
+    // const response = await formResponse(curUserState, sentMessage.Body);
+    const response = await manageKeywordSent(sentMessage, curUserState);
 
     const message = new MessagingResponse();
     message.message(response);
 
     // if there's a conditional (like not recording all messages), put that here
     storeMessage(sentMessage, curUserState.currMessage);
-    
+
     context.res = {
         // status: 200, /* Defaults to 200 */ /*
         body: message.toString(),
         headers: { 'Content-Type': 'application/xml' },
         isRaw: true,
     };
-    
+
     context.done();
 };
 
-const storeMessage = async function (sentMessage:qs.ParsedQs, curMessageID: Schema.Types.ObjectId) {
-    const userMessage  = new MessageResponse({
+const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Schema.Types.ObjectId) {
+    const userMessage = new MessageResponse({
         accountID: sentMessage.From,
         chatBotMessageID: curMessageID,
-        response: sentMessage.Body});
+        response: sentMessage.Body,
+    });
     userMessage.save(function (err, mes) {
         if (err) return console.error(err);
-        console.log("Saved message to database");
+        console.log('Saved message to database');
     });
-}
+};
+
+//checks if a special keyword is in the message sent
+const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState) {
+    if (specialMessageIds.has(sentMessage.Body)) {
+        // special message handling
+        const responseString = specialMessageIds.get(sentMessage.Body);
+
+        // update curUserState depending on the specialMessageId
+        if (sentMessage.Body == 'restart') {
+            curUserState.currMessage = '6022178429efc055c8e74e50';
+            await curUserState.save();
+        } else if (sentMessage.Body == 'completed') {
+            // do not update userstate
+            const responseStringCompleted = 'You have completed ' + curUserState.completedModules.length + ' modules.';
+            return responseStringCompleted;
+        }
+
+        // return message text
+        return responseString;
+    } else {
+        // normal handling
+        const responseString = await formResponse(curUserState, sentMessage.Body);
+        return responseString;
+    }
+};
 
 export default httpTrigger;

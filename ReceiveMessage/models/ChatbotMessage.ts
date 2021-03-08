@@ -3,11 +3,11 @@ import mongoose, { Schema, Document } from 'mongoose';
 
 export interface IMessage extends Document {
     body: string;
-    images: string;
+    images?: string;
     nextMessages: Map <Schema.Types.ObjectId,Schema.Types.ObjectId>;
-    previousMessage: Schema.Types.ObjectId;
+    previousMessage?: Schema.Types.ObjectId;
     module: string;
-    isQuestion: boolean;
+    isQuestion?: boolean;
     lowData: string;
 }
 
