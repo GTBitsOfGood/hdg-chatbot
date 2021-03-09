@@ -1,13 +1,13 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from 'mongoose'
 
 export interface IMessage extends Document {
-    body: string;
-    images: Array<string>;
-    nextMessages: Map<Schema.Types.ObjectId, Schema.Types.ObjectId>;
-    previousMessage: Schema.Types.ObjectId;
-    module: string;
-    isQuestion: boolean;
-    lowData: string;
+    body: string
+    images?: Array<string>
+    nextMessages: Map<Schema.Types.ObjectId, Schema.Types.ObjectId>
+    previousMessage: Schema.Types.ObjectId
+    module: string
+    isQuestion?: boolean
+    lowData: string
 }
 
 const ChatbotMessageSchema = new Schema({
@@ -18,6 +18,6 @@ const ChatbotMessageSchema = new Schema({
     module: { type: String, required: true },
     isQuestion: { type: Boolean, required: false },
     lowData: { type: String, required: true },
-});
+})
 
-export default mongoose.model<IMessage>('ChatbotMessage', ChatbotMessageSchema);
+export default mongoose.model<IMessage>('ChatbotMessage', ChatbotMessageSchema)
