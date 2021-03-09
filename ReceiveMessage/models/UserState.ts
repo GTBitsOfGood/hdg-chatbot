@@ -8,6 +8,7 @@ export interface IUserState extends Document {
     split: boolean;
     lowData: boolean;
     completedTimes: Array<Schema.Types.Date>;
+    lastActivity: Date; 
 }
 
 const UserStateSchema = new Schema({
@@ -22,6 +23,7 @@ const UserStateSchema = new Schema({
     split: { type: Boolean, required: false },
     lowData: { type: Boolean },
     completedTimes: { type: Array, default: [null, null, null, null, null] },
+    lastActivity: {type: Date},
 });
 
 export default mongoose.model<IUserState>('UserState', UserStateSchema);

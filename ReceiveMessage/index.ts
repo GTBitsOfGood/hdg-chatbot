@@ -17,6 +17,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const sentMessage = qs.parse(req.body);
 
     const curUserState = await getUserState(req);
+    curUserState.lastActivity = sentMessage.date_sent;
     context.log(curUserState);
     context.log(sentMessage);
     // const response = await formResponse(curUserState, sentMessage.Body);
