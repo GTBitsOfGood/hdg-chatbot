@@ -1,7 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import * as twilio from 'twilio';
 import qs from 'qs';
-import readUserRequest from './Scripts/readRequest';
+import getUserState from './Scripts/readRequest';
 import MessageResponse from './models/MessageResponse';
 import UserState from './models/UserState';
 import { Schema } from 'mongoose';
@@ -16,17 +16,27 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log('HTTP trigger function processed a request.');
     const sentMessage = qs.parse(req.body);
 
-    const curUserState = await readUserRequest(req);
+    const curUserState = await getUserState(req);
     context.log(curUserState);
     context.log(sentMessage);
     // const response = await formResponse(curUserState, sentMessage.Body);
     const response = await manageKeywordSent(sentMessage, curUserState);
 
+    if (response.images != null) {
+        response.images.forEach(function (image) {
+            const imageResponse = new MessagingResponse();
+            const imageMessage = imageResponse.message('');
+            imageMessage.media(image);
+        });
+    }
+
     const message = new MessagingResponse();
-    message.message(response);
+    message.message(response.body);
 
     // if there's a conditional (like not recording all messages), put that here
-    storeMessage(sentMessage, curUserState.currMessage);
+    if (sentMessage.isQuestion) {
+        storeMessage(sentMessage, curUserState.currMessage);
+    }
 
     context.res = {
         // status: 200, /* Defaults to 200 */ /*
