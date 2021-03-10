@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose'
 export interface IMessage extends Document {
     body: string
     images?: Array<string>
-    nextMessages: Map<Schema.Types.ObjectId, Schema.Types.ObjectId>
+    nextMessages: Map<string, Schema.Types.ObjectId>
     previousMessage: Schema.Types.ObjectId
     module: string
     isQuestion?: boolean
