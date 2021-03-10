@@ -1,8 +1,4 @@
-import { AzureFunction, Context, HttpRequest } from '@azure/functions'
-import * as twilio from 'twilio'
-import qs from 'qs'
 import MongoConnect from './db'
-import UserState from '../models/UserState'
 import ChatbotMessage from '../models/ChatbotMessage'
 
 const formResponse = async function (state, message) {

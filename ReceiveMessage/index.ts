@@ -3,12 +3,9 @@ import * as twilio from 'twilio'
 import qs from 'qs'
 import getUserState from './Scripts/readRequest'
 import MessageResponse from './models/MessageResponse'
-import UserState from './models/UserState'
 import { Schema } from 'mongoose'
 import formResponse from './Scripts/sendMessage'
-import { ConferenceContext } from 'twilio/lib/rest/api/v2010/account/conference'
 import specialMessageIds from './specialMessageIds'
-import ChatbotMessage from './models/ChatbotMessage'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
 
@@ -22,16 +19,17 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // const response = await formResponse(curUserState, sentMessage.Body);
     const response = await manageKeywordSent(sentMessage, curUserState)
 
-    if (response.images != null) {
-        response.images.forEach(function (image) {
-            const imageResponse = new MessagingResponse()
-            const imageMessage = imageResponse.message('')
-            imageMessage.media(image)
-        })
-    }
+    // broke based on manageKeywordSent functionality
+    // if (response.images != null) {
+    //     response.images.forEach(function (image) {
+    //         const imageResponse = new MessagingResponse()
+    //         const imageMessage = imageResponse.message('')
+    //         imageMessage.media(image)
+    //     })
+    // }
 
     const message = new MessagingResponse()
-    message.message(response.body)
+    message.message(response)
 
     // if there's a conditional (like not recording all messages), put that here
     if (sentMessage.isQuestion) {
@@ -72,7 +70,8 @@ const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState
             await curUserState.save()
         } else if (sentMessage.Body == 'completed') {
             // do not update userstate
-            const responseStringCompleted = 'You have completed ' + curUserState.completedModules.length + ' modules.'
+            const responseStringCompleted =
+                'You have completed ' + curUserState.moduleCompletionTime.length + ' modules.'
             return responseStringCompleted
         }
 
@@ -81,7 +80,7 @@ const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState
     } else {
         // normal handling
         const responseString = await formResponse(curUserState, sentMessage.Body)
-        return responseString
+        return responseString.body
     }
 }
 
