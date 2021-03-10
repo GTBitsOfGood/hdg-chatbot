@@ -15,8 +15,9 @@ const MessagingResponse = twilio.twiml.MessagingResponse
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.')
     const sentMessage = qs.parse(req.body)
-
     const curUserState = await getUserState(req)
+    curUserState.lastActivity = new Date();
+    curUserState.save();
     context.log(curUserState)
     context.log(sentMessage)
     // const response = await formResponse(curUserState, sentMessage.Body);
@@ -81,7 +82,7 @@ const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState
     } else {
         // normal handling
         const responseString = await formResponse(curUserState, sentMessage.Body)
-        return responseString
+        return responseString.body
     }
 }
 
