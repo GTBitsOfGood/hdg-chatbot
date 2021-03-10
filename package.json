@@ -18,7 +18,7 @@
     "secrets": "npm run secrets:logout && cross-env-shell BW_SESSION=`bw login product@bitsofgood.org --raw` \"npm run secrets:sync\"",
     "secrets:logout": "(bw logout || exit 0)",
     "secrets:login": "bw login product@bitsofgood.org",
-    "secrets:sync": "bw sync && bw get item ac10744b-f716-43a8-a167-acc8000710f6 | fx .notes > \".env\""
+    "secrets:sync": "bw sync && bw get item ac10744b-f716-43a8-a167-acc8000710f6 | fx .notes > \".env\" && bw get item b2840e75-47bf-479a-9dbe-ace2017656cb | fx .notes > \"local.settings.json\""
   },
   "description": "",
   "devDependencies": {
