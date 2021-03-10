@@ -9,13 +9,22 @@ const MessagingResponse = twilio.twiml.MessagingResponse;
 //change to Promise<UserState> later
 const getUserState = async function (req: HttpRequest) {
     const body = qs.parse(req.body);
-
     // do necessary processing on the request (nothing at this point)
-
+    await MongoConnect();
+    const userStateResult = await UserState.find({ userId: body.From as string });
+    if (userStateResult.length === 0) {
+        const newUser = new UserState({ userId: body.From });
+        newUser.save(function (err) {
+            if (err) {
+                console.log(err);
+            }
+            ``;
+        });
+    }
     // retrieve and return the corresponding state
     const id = body.AccountSid;
     await MongoConnect();
-    const result = await UserState.find({ userId: id as string});
+    const result = await UserState.find({ userId: id as string });
     return result[0];
 };
 
