@@ -1,4 +1,5 @@
 import { AzureFunction, Context } from '@azure/functions'
+import Mongoose from 'mongoose';
 
 import UserState from '../ReceiveMessage/models/UserState'
 import MongoConnect from '../ReceiveMessage/Scripts/db'
@@ -41,6 +42,8 @@ const messageInactiveUsers = async function (date: Date) {
     })
     allUsers.forEach((user) => {
         sendInactiveMessage(user.userId, twoWeeks.toDateString(), user.lowData)
+        //hardcoded to welcome message
+        user.currMessage = Mongoose.Types.ObjectId("6022178429efc055c8e74e50");
     })
 }
 
@@ -75,6 +78,8 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
                 return x || x >= 0
             })
         sendCompletedMessage(user.userId, twoMonths.toDateString(), modules, user.lowData)
+        // can't hardcode at the moment but would be here
+        // user.currMessage = Mongoose.Types.ObjectId("????");
     })
 }
 
