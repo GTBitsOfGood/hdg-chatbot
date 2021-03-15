@@ -40,7 +40,7 @@ const messageInactiveUsers = async function (date: Date) {
         lastActivity: twoWeeks,
     })
     allUsers.forEach((user) => {
-        sendInactiveMessage(user.userId, twoWeeks.toDateString())
+        sendInactiveMessage(user.userId, twoWeeks.toDateString(), user.lowData)
     })
 }
 
@@ -74,7 +74,7 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
                 // 0 is also falsy so we need the second check to make sure any match at index 0 goes through
                 return x || x >= 0
             })
-        sendCompletedMessage(user.userId, twoMonths.toDateString(), modules)
+        sendCompletedMessage(user.userId, twoMonths.toDateString(), modules, user.lowData)
     })
 }
 
