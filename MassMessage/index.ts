@@ -16,47 +16,53 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
 
     await MongoConnect()
 
-    const date = new Date()
+    const curDate = new Date()
     //avoiding the use of times
-    date.setHours(0)
-    date.setMinutes(0)
-    date.setSeconds(0)
-    date.setMilliseconds(0)
+    curDate.setHours(0)
+    curDate.setMinutes(0)
+    curDate.setSeconds(0)
+    curDate.setMilliseconds(0)
+    // passing this date around so we don't need to repeatedly set times to 0
 
-    //set to two months ago
-    date.setMonth(date.getMonth() - 2)
-
-    const inactive = await messageInactiveUsers(date)
+    const inactive = await messageInactiveUsers(curDate)
     context.log(inactive)
-    const catchup = await messageCompletedUsers(date, context)
+    const catchup = await messageCompletedUsers(curDate, context)
     context.log(catchup)
 }
 
-//gets users where last activity was exactly 2 months ago
+//gets users where last activity was exactly 2 weeks ago
 const messageInactiveUsers = async function (date: Date) {
+    //set to two weeks ago
+    const twoWeeks = new Date(date);
+    twoWeeks.setDate(twoWeeks.getDate() - 14);
+    
     const allUsers = await UserState.find({
-        lastActivity: date,
+        lastActivity: twoWeeks,
     })
     allUsers.forEach((user) => {
-        sendInactiveMessage(user.userId, date.toDateString())
+        sendInactiveMessage(user.userId, twoWeeks.toDateString())
     })
 }
 
 //gets users where they completed a module 2 months ago
 const messageCompletedUsers = async function (date: Date, context: Context) {
-    const prevDay = new Date(date.toDateString())
+    //set to two months ago
+    const twoMonths = new Date(date);
+    twoMonths.setMonth(twoMonths.getMonth() - 2);
+
+    const prevDay = new Date(twoMonths)
     prevDay.setDate(prevDay.getDate() - 1)
 
     const allUsers = await UserState.find({
         moduleCompletionTime: {
             $gte: prevDay,
-            $lt: date,
+            $lt: twoMonths,
         },
     })
     allUsers.forEach((user) => {
         const modules = user.moduleCompletionTime
             .map((time, index) => {
-                if (time >= prevDay && time < date) {
+                if (time >= prevDay && time < twoMonths) {
                     // module was completed 2 months ago
                     return index
                 } else {
@@ -68,7 +74,7 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
                 // 0 is also falsy so we need the second check to make sure any match at index 0 goes through
                 return x || x >= 0
             })
-        sendCompletedMessage(user.userId, date.toDateString(), modules)
+        sendCompletedMessage(user.userId, twoMonths.toDateString(), modules)
     })
 }
 
