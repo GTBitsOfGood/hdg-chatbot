@@ -18,7 +18,7 @@ const UserStateSchema = new Schema({
         default: '6022178429efc055c8e74e50',
     },
     lowData: { type: Boolean },
-    moduleCompletionTime: { type: Array, default: [null, null, null, null, null] },
+    moduleCompletionTime: { type: [Date], default: [null, null, null, null, null] },
     lastActivity: { type: Date },
 })
 
