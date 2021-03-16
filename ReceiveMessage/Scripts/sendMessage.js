@@ -15,8 +15,12 @@ const formResponse = async function (userState, receivedMessage) {
         if (receivedMessage.Body == 'restart') {
             nextMessageId = '6022178429efc055c8e74e50'
         } else if (receivedMessage.Body == 'completed') {
+            userState.lastActivity = Date.now()
+            userState.save()
             return 'You have completed ' + userState.moduleCompletionTime.length + ' modules.'
         } else {
+            userState.lastActivity = Date.now()
+            userState.save()
             return specialMessageIds.get(receivedMessage.Body)
         }
     } else {
@@ -27,6 +31,7 @@ const formResponse = async function (userState, receivedMessage) {
         }
     }
     userState.currMessage = nextMessageId
+    userState.lastActivity = Date.now()
     userState.save()
     const nextMessage = await ChatbotMessage.findById(nextMessageId)
     return nextMessage

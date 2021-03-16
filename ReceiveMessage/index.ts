@@ -22,9 +22,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     if (typeof response === 'string') {
         message.message(response)
     } else {
-        const responseMessage = response.nextMessage
-        if (responseMessage.images != null) {
-            responseMessage.images.forEach(function (image) {
+        if (response.images != null) {
+            response.images.forEach(function (image) {
                 const imageResponse = new MessagingResponse()
                 const imageMessage = imageResponse.message('')
                 imageMessage.media(image)
