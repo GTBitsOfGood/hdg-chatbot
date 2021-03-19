@@ -26,9 +26,9 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
     // passing this date around so we don't need to repeatedly set times to 0
 
     const inactive = await messageInactiveUsers(curDate)
-    context.log(inactive)
-    const catchup = await messageCompletedUsers(curDate, context)
-    context.log(catchup)
+    context.log(inactive);
+    const completed = await messageCompletedUsers(curDate, context)
+    context.log(completed);
 }
 
 //gets users where last activity was exactly 2 weeks ago
@@ -41,10 +41,16 @@ const messageInactiveUsers = async function (date: Date) {
         lastActivity: twoWeeks,
     })
     allUsers.forEach((user) => {
-        sendInactiveMessage(user.userId, twoWeeks.toDateString(), user.lowData)
+        //sendInactiveMessage(user.userId, twoWeeks.toDateString(), user.lowData)
         //hardcoded to welcome message
         user.currMessage = Mongoose.Types.ObjectId("6022178429efc055c8e74e50");
+        user.save((err) => {
+            if (err) {
+                console.error(err);
+            }
+        })
     })
+    return allUsers;
 }
 
 //gets users where they completed a module 2 months ago
@@ -55,11 +61,12 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
 
     const prevDay = new Date(twoMonths)
     prevDay.setDate(prevDay.getDate() - 1)
+    
 
     const allUsers = await UserState.find({
         moduleCompletionTime: {
-            $gte: prevDay,
-            $lt: twoMonths,
+            $gt: prevDay,
+            $lte: twoMonths
         },
     })
     allUsers.forEach((user) => {
@@ -77,10 +84,21 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
                 // 0 is also falsy so we need the second check to make sure any match at index 0 goes through
                 return x || x >= 0
             })
-        sendCompletedMessage(user.userId, twoMonths.toDateString(), modules, user.lowData)
-        // can't hardcode at the moment but would be here
-        // user.currMessage = Mongoose.Types.ObjectId("????");
+
+        //if no modules were completed 2 months ago then do nothing
+        if (modules.length > 0) {
+            // sendCompletedMessage(user.userId, twoMonths.toDateString(), modules, user.lowData)
+            // can't hardcode at the moment but would be here
+            // user.currMessage = Mongoose.Types.ObjectId("????");
+            user.currMessage = Mongoose.Types.ObjectId("6022178429efc055c8e74e52");
+            user.save((err) => {
+                if (err) {
+                    console.error(err);
+                }
+            })
+        }
     })
+    return allUsers;
 }
 
 export default timerTrigger
