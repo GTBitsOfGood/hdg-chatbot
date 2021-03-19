@@ -5,6 +5,7 @@ import getUserState from './Scripts/readRequest'
 import MessageResponse from './models/MessageResponse'
 import { Schema } from 'mongoose'
 import formResponse from './Scripts/sendMessage'
+import UserState from './models/UserState'
 import specialMessageIds from './specialMessageIds'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
@@ -16,20 +17,18 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const curUserState = await getUserState(req)
     context.log(curUserState)
     context.log(sentMessage)
-    // const response = await formResponse(curUserState, sentMessage.Body);
-    const response = await manageKeywordSent(sentMessage, curUserState)
+    const response = await manageKeywordSent(sentMessage, curUserState) // returns IMessage
 
-    // broke based on manageKeywordSent functionality
-    // if (response.images != null) {
-    //     response.images.forEach(function (image) {
-    //         const imageResponse = new MessagingResponse()
-    //         const imageMessage = imageResponse.message('')
-    //         imageMessage.media(image)
-    //     })
-    // }
+    if (response.images != null) {
+        response.images.forEach(function (image) {
+            const imageResponse = new MessagingResponse()
+            const imageMessage = imageResponse.message('')
+            imageMessage.media(image)
+        })
+    }
 
     const message = new MessagingResponse()
-    message.message(response)
+    message.message(response.body)
 
     // if there's a conditional (like not recording all messages), put that here
     if (sentMessage.isQuestion) {
@@ -59,28 +58,16 @@ const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Sch
 }
 
 //checks if a special keyword is in the message sent
-const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState) {
+const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState: InstanceType<typeof UserState>) {
     if (specialMessageIds.has(sentMessage.Body)) {
         // special message handling
-        const responseString = specialMessageIds.get(sentMessage.Body)
-
-        // update curUserState depending on the specialMessageId
-        if (sentMessage.Body == 'restart') {
-            curUserState.currMessage = '6022178429efc055c8e74e50'
-            await curUserState.save()
-        } else if (sentMessage.Body == 'completed') {
-            // do not update userstate
-            const responseStringCompleted =
-                'You have completed ' + curUserState.moduleCompletionTime.length + ' modules.'
-            return responseStringCompleted
-        }
-
-        // return message text
+        const responseHandler = specialMessageIds.get(sentMessage.Body)
+        const responseString = responseHandler(curUserState)
         return responseString
     } else {
         // normal handling
         const responseString = await formResponse(curUserState, sentMessage.Body)
-        return responseString.body
+        return responseString
     }
 }
 
