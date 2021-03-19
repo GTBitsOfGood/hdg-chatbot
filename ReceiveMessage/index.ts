@@ -19,16 +19,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log(sentMessage)
     const response = await manageKeywordSent(sentMessage, curUserState) // returns IMessage
 
-    if (response.images != null) {
-        response.images.forEach(function (image) {
-            const imageResponse = new MessagingResponse()
-            const imageMessage = imageResponse.message('')
-            imageMessage.media(image)
-        })
-    }
-
     const message = new MessagingResponse()
-    message.message(response.body)
+    const messageContent = message.message('')
+    messageContent.body(response.body)
+    if (response.images != null) {
+        messageContent.media(response.images[0])
+    }
 
     // if there's a conditional (like not recording all messages), put that here
     if (sentMessage.isQuestion) {
