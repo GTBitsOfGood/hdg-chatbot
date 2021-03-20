@@ -1,13 +1,14 @@
 import qs from 'qs'
-import UserState from './models/UserState'
+import UserState, {IUserState} from './models/UserState'
 import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
+import Mongoose from 'mongoose';
 
 interface templateSpecialMessageHandler {
-    (curUserState: InstanceType<typeof UserState>): Promise<IMessage>
+    (curUserState: IUserState): Promise<IMessage>
 }
 
 const restartHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
+    curUserState: IUserState,
 ): Promise<IMessage> {
     curUserState.currMessage = '6022178429efc055c8e74e50'
     await curUserState.save()
@@ -18,7 +19,7 @@ const restartHandler: templateSpecialMessageHandler = async function (
 }
 
 const commandsHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
+    curUserState: IUserState,
 ): Promise<IMessage> {
     const returnMessage = new ChatbotMessage()
     returnMessage.body = 'Here is a list of commands: restart, completed, help'
@@ -26,7 +27,7 @@ const commandsHandler: templateSpecialMessageHandler = async function (
 }
 
 const completedHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
+    curUserState: IUserState,
 ): Promise<IMessage> {
     const returnMessage = new ChatbotMessage()
     let numCompleted = 0
@@ -39,9 +40,10 @@ const completedHandler: templateSpecialMessageHandler = async function (
     return returnMessage
 }
 
+
 // mostly for testing purposes
 const currentHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
+    curUserState: IUserState,
 ): Promise<IMessage> {
     return ChatbotMessage.findById(curUserState.currMessage)
 }
