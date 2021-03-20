@@ -31,7 +31,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     message.message(response.body)
 
     // if there's a conditional (like not recording all messages), put that here
-    if (sentMessage.isQuestion) {
+    if (sentMessage.messageType == 'question') {
         storeMessage(sentMessage, curUserState.currMessage)
     }
 

@@ -22,10 +22,7 @@ const getUserState = async function (req: HttpRequest) {
         })
     }
     // retrieve and return the corresponding state
-    const id = body.AccountSid
-    await MongoConnect()
-    const result = await UserState.find({ userId: id as string })
-    return result[0]
+    return userStateResult[0]
 }
 
 export default getUserState

@@ -6,7 +6,7 @@ export interface IMessage extends Document {
     nextMessages: Map<string, Schema.Types.ObjectId>
     previousMessage: Schema.Types.ObjectId
     module: string
-    isQuestion?: boolean
+    messageType: string //can only be "question", "final-message", "message", or "splitting"
     lowData: string
 }
 
@@ -17,7 +17,7 @@ const ChatbotMessageSchema = new Schema({
     nextMessages: { type: Map, of: { type: Schema.Types.ObjectId, ref: 'ChatbotMessage' }, required: true },
     previousMessage: { type: Schema.Types.ObjectId, ref: 'ChatbotMessage', required: false },
     module: { type: String, required: true },
-    isQuestion: { type: Boolean, required: false },
+    messageType: { type: String, enum: ['question', 'final-message', 'message', 'splitting'], required: true },
     lowData: { type: String, required: true },
 })
 

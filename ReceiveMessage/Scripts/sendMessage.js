@@ -9,7 +9,7 @@ const formResponse = async function (state, message) {
     await MongoConnect()
     const prev = await ChatbotMessage.findById(p)
     const map = prev.nextMessages
-    let nextChatbotMessageId = map.get(prev.isQuestion ? message : 'default')
+    let nextChatbotMessageId = map.get(map.size > 1 ? message : 'default')
     if (nextChatbotMessageId == null) {
         nextChatbotMessageId = '6022178429efc055c8e74e50' //change this to whatever error message we want to send (for now it is welcome message)
     }

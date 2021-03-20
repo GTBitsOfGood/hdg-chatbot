@@ -61,9 +61,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             prop: 'keywords',
             type: String,
         },
-        ISQUESTION: {
-            prop: 'isQuestion',
-            type: Boolean,
+        MESSAGETYPE: {
+            prop: 'messageType',
+            type: String,
         },
     }
     await Mongo()
@@ -120,7 +120,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                 .split(',')
                 .map((x: string) => x.trim())
             existingMessage.module = row.module
-            existingMessage.isQuestion = row.isQuestion
+            existingMessage.messageType = row.messageType
             existingMessage.lowData = row.lowDataBody
             messagesToInsert.set(row.messageId, {
                 record: existingMessage,
@@ -142,7 +142,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                         .split(',')
                         .map((x: string) => x.trim()),
                     module: row.module,
-                    isQuestion: row.isQuestion,
+                    messageType: row.messageType,
                     lowData: row.lowDataBody,
                     previousMessage: 'not yet',
                 }),
