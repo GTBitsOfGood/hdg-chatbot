@@ -24,6 +24,14 @@ local.settings.json
 
 node_modules
 dist
+InputData\~$messages.xlsx
+
+__blobstorage__
+__queuestorage__
+__azurite_db_blob__.json
+__azurite_db_blob_extent__.json
+__azurite_db_queue__.json
+__azurite_db_queue_extent__.json
 
 # Local python packages
 .python_packages/

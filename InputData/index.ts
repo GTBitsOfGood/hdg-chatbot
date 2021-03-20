@@ -14,7 +14,7 @@ type MessageToBeCreated = {
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.')
 
-    let success = true
+    const success = true
 
     const path = req.query.path || (req.body && req.body.path)
 
@@ -55,6 +55,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         'LOW DATA': {
             prop: 'lowDataBody',
             type: String, // it is possible to validate each of these values.
+            required: true,
         },
         KEYWORDS: {
             prop: 'keywords',
@@ -71,12 +72,19 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const errors = readXlsx.errors
     if (errors.length != 0) {
         context.log(errors)
-        success = false
+        let errorBody = `There were ${errors.length} number of errors:\n`
+        for (const error of errors) {
+            errorBody += `Row ${error.row}; Col ${error.column}; Error: ${error.error}`
+        }
+        context.res = {
+            // status: 200, /* Defaults to 200 */
+            body: errorBody,
+        }
         return
     }
     const messagesToInsert = new Map<number, MessageToBeCreated>()
     // 1.) Make a map based upon all of the messageIds, with the value being a chatbotMessage
-    for (const row of rows) {
+    for (const [i, row] of rows.entries()) {
         // 0.) Convert nextMessages into an array; same with keywords:
         const nextMessagesArray: number[] = row.nextMessages
             .toString()
@@ -90,7 +98,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
             : ['default']
 
         if (nextMessagesArray.length != nextKeywordsArray.length) {
-            success = false
+            context.res = {
+                // status: 200, /* Defaults to 200 */
+                body: `on probably line ${i + 2} for the message with id ${
+                    row.messageId
+                } there was a mismatch between the next messages and number of corresponding keywords.`,
+            }
             return
         }
 
@@ -160,7 +173,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     //      isn't desirable. If we do a good job error checking above, though, that would be fine.
     for (const [key, record] of messagesToInsert) {
         context.log(record.record)
-        await record.record.save()
+        // await record.record.save()
     }
 
     let responseMessage = path
