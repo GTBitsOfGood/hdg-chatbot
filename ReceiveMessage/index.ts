@@ -7,6 +7,7 @@ import { Schema } from 'mongoose'
 import formResponse from './Scripts/sendMessage'
 import UserState from './models/UserState'
 import specialMessageIds from './specialMessageIds'
+import fixedMessages from './fixedMessages'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
 
@@ -60,6 +61,9 @@ const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState
         const responseHandler = specialMessageIds.get(sentMessage.Body)
         const responseString = responseHandler(curUserState)
         return responseString
+    } else if (fixedMessages.has(sentMessage.Body)) {
+        // fixed message handling
+        return fixedMessages.get(sentMessage.Body)
     } else {
         // normal handling
         const responseString = await formResponse(curUserState, sentMessage.Body)
