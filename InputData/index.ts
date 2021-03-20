@@ -115,7 +115,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         // 2.) If that record exists, set the value to be that chatbotMessage
         if (existingMessage) {
             existingMessage.body = row.body
-            existingMessage.image = row.multimedia.toString()
+            existingMessage.image = row.multimedia ? row.multimedia.toString() : ''
             existingMessage.module = row.module
             existingMessage.messageType = row.messageType
             existingMessage.lowData = row.lowDataBody
