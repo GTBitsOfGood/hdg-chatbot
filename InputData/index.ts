@@ -134,7 +134,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
                     messageId: row.messageId,
                     body: row.body,
                     nextMessages: {},
-                    image: row.multimedia.toString(),
+                    image: row.multimedia ? row.multimedia.toString() : '',
                     module: row.module,
                     messageType: row.messageType,
                     lowData: row.lowDataBody,
@@ -150,14 +150,28 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // 2.) Iterate through every entry of the map, and make connections between all of the messages.
     for (const [key, record] of messagesToInsert) {
         for (let i = 0; i < record.nextMessages.length; i++) {
-            // const nextMessage = await ChatbotMessage.findOne({
-            //     messageId: record.nextMessages[i],
-            // }).exec()
-            record.record.nextMessages.set(
-                record.keywords[i],
-                messagesToInsert.get(record.nextMessages[i]).record['_id'],
-            )
-            record.record.previousMessage = messagesToInsert.get(record.previousMessage).record['_id']
+            const nextMessage = messagesToInsert.get(record.nextMessages[i])
+            const prevMessage = messagesToInsert.get(record.previousMessage)
+            if (!nextMessage) {
+                context.res = {
+                    // status: 200, /* Defaults to 200 */
+                    body:
+                        record.nextMessages[i] +
+                        ' is not a valid messageId. Please check to make sure this id was put in properly',
+                }
+                return
+            }
+            if (!prevMessage) {
+                context.res = {
+                    // status: 200, /* Defaults to 200 */
+                    body:
+                        record.previousMessage +
+                        ' is not a valid messageId. Please check to make sure this id was put in properly',
+                }
+                return
+            }
+            record.record.nextMessages.set(record.keywords[i], nextMessage.record['_id'])
+            record.record.previousMessage = prevMessage.record['_id']
         }
     }
 
@@ -166,8 +180,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     //      The one caveat is that if there is an error somehow with saving, then it will keep saving everything else, which probably
     //      isn't desirable. If we do a good job error checking above, though, that would be fine.
     for (const [key, record] of messagesToInsert) {
-        context.log(record.record)
-        // await record.record.save()
+        //context.log(record.record)
+        await record.record.save()
     }
 
     let responseMessage = path

@@ -18,11 +18,11 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log(curUserState)
     context.log(sentMessage)
     const response = await manageKeywordSent(sentMessage, curUserState) // returns IMessage
-
+    context.log(response)
     const message = new MessagingResponse()
     const messageContent = message.message('')
     messageContent.body(response.body)
-    if (response.image != null) {
+    if (response.image) {
         messageContent.media(response.image)
     }
 
