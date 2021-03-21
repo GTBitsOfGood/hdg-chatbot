@@ -1,14 +1,13 @@
 import qs from 'qs'
-import UserState from './models/UserState'
+import UserState, { IUserState } from './models/UserState'
 import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
+import Mongoose from 'mongoose'
 
 interface templateSpecialMessageHandler {
-    (curUserState: InstanceType<typeof UserState>): Promise<IMessage>
+    (curUserState: IUserState): Promise<IMessage>
 }
 
-const restartHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
-): Promise<IMessage> {
+const restartHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
     curUserState.currMessage = '6022178429efc055c8e74e50'
     await curUserState.save()
     const returnMessage = new ChatbotMessage()
@@ -17,17 +16,13 @@ const restartHandler: templateSpecialMessageHandler = async function (
     return returnMessage
 }
 
-const commandsHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
-): Promise<IMessage> {
+const commandsHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
     const returnMessage = new ChatbotMessage()
     returnMessage.body = 'Here is a list of commands: restart, completed, help'
     return returnMessage
 }
 
-const completedHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
-): Promise<IMessage> {
+const completedHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
     const returnMessage = new ChatbotMessage()
     let numCompleted = 0
     for (let i = 0; i < curUserState.moduleCompletionTime.length; i++) {
@@ -40,9 +35,7 @@ const completedHandler: templateSpecialMessageHandler = async function (
 }
 
 // mostly for testing purposes
-const currentHandler: templateSpecialMessageHandler = async function (
-    curUserState: InstanceType<typeof UserState>,
-): Promise<IMessage> {
+const currentHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
     return ChatbotMessage.findById(curUserState.currMessage)
 }
 
