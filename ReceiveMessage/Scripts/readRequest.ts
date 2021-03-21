@@ -18,7 +18,6 @@ const getUserState = async function (req: HttpRequest) {
             if (err) {
                 console.log(err)
             }
-            ;``
         })
     }
     // retrieve and return the corresponding state
