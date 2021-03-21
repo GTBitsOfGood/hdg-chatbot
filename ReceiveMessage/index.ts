@@ -5,9 +5,11 @@ import getUserState from './Scripts/readRequest'
 import MessageResponse from './models/MessageResponse'
 import { Schema } from 'mongoose'
 import formResponse from './Scripts/sendMessage'
-import UserState from './models/UserState'
+import UserState, { IUserState } from './models/UserState'
 import specialMessageIds from './specialMessageIds'
 import fixedMessages from './fixedMessages'
+import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
+import Mongoose from 'mongoose'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
 
@@ -16,21 +18,24 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const sentMessage = qs.parse(req.body)
 
     const curUserState = await getUserState(req)
-    context.log(curUserState)
-    context.log(sentMessage)
-    const response = await manageKeywordSent(sentMessage, curUserState) // returns IMessage
-    context.log(response)
+    const response = await manageKeywordSent(sentMessage, curUserState, req) // returns IMessage
+
     const message = new MessagingResponse()
     const messageContent = message.message('')
     messageContent.body(response.body)
-    if (response.image) {
+
+    context.log(response)
+    if (response.image && response.image != '') {
         messageContent.media(response.image)
     }
 
     // if there's a conditional (like not recording all messages), put that here
-    if (sentMessage.messageType == 'question') {
+    // make sure user has consented to data storage
+    // make sure curUserState is not null
+    if (curUserState && curUserState.dataConsent && sentMessage.messageType == 'question') {
         storeMessage(sentMessage, curUserState.currMessage)
     }
+    context.log(message.toString())
 
     context.res = {
         // status: 200, /* Defaults to 200 */ /*
@@ -55,8 +60,31 @@ const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Sch
 }
 
 //checks if a special keyword is in the message sent
-const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState: InstanceType<typeof UserState>) {
-    if (specialMessageIds.has(sentMessage.Body)) {
+const manageKeywordSent = async function (
+    sentMessage: qs.ParsedQs,
+    curUserState: IUserState,
+    req: HttpRequest,
+): Promise<IMessage> {
+    const msg = 'i consent'
+    const body = qs.parse(req.body)
+
+    if (!curUserState && msg == sentMessage.Body) {
+        //new user that consents
+        const messageId = Mongoose.Types.ObjectId('60563903ea9f2e441461118c') //points to data consent question
+        const newUser = new UserState({ userId: body.From, dataConsent: false, currMessage: messageId })
+        await newUser.save()
+
+        const returnMessage = new ChatbotMessage()
+        returnMessage.body =
+            'Thank you for consenting! if angry at data collect write "no data pls" otherwise we\'ll sneaky sneaky. respond to continue thanks'
+        return returnMessage
+    } else if (!curUserState) {
+        //new user that hasn't consented
+        const returnMessage = new ChatbotMessage()
+        returnMessage.body =
+            'Doth thee consent to receiving messages from this numb\'r.  Replyeth with "i consent" if \'t be true thee doth'
+        return returnMessage
+    } else if (specialMessageIds.has(sentMessage.Body)) {
         // special message handling
         const responseHandler = specialMessageIds.get(sentMessage.Body)
         const responseString = responseHandler(curUserState)

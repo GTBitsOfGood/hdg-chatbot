@@ -4,8 +4,6 @@ import qs from 'qs'
 import MongoConnect from './db'
 import UserState from '../models/UserState'
 
-const MessagingResponse = twilio.twiml.MessagingResponse
-
 //change to Promise<UserState> later
 const getUserState = async function (req: HttpRequest) {
     const body = qs.parse(req.body)
