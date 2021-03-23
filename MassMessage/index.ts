@@ -58,7 +58,7 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
 
     const allUsers = await UserState.find({
         moduleCompletionTime: {
-            $gte: prevDay,
+            $gt: prevDay,
             $lt: twoMonths,
         },
     })
@@ -77,9 +77,13 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
                 // 0 is also falsy so we need the second check to make sure any match at index 0 goes through
                 return x || x >= 0
             })
-        sendCompletedMessage(user.userId, twoMonths.toDateString(), modules, user.lowData)
-        // can't hardcode at the moment but would be here
-        // user.currMessage = Mongoose.Types.ObjectId("????");
+        if (modules === undefined) {
+            sendInactiveMessage(user.userId, twoMonths.toDateString(), user.lowData)
+            //hardcoded to welcome message
+            user.currMessage = Mongoose.Types.ObjectId("6022178429efc055c8e74e50")
+        } else {
+            sendCompletedMessage(user.userId, twoMonths.toDateString(), modules, user.lowData)
+        }
     })
 }
 
