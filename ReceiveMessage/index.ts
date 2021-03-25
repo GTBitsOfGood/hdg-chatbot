@@ -11,29 +11,23 @@ const MessagingResponse = twilio.twiml.MessagingResponse
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.')
-    const sentMessage = qs.parse(req.body)
+    const receivedMessage = qs.parse(req.body)
 
-    const curUserState = await getUserState(req)
-    context.log(curUserState)
-    context.log(sentMessage)
-    // const response = await formResponse(curUserState, sentMessage.Body);
-    const response = await manageKeywordSent(sentMessage, curUserState)
-
-    // broke based on manageKeywordSent functionality
-    // if (response.images != null) {
-    //     response.images.forEach(function (image) {
-    //         const imageResponse = new MessagingResponse()
-    //         const imageMessage = imageResponse.message('')
-    //         imageMessage.media(image)
-    //     })
-    // }
+    const userState = await getUserState(req)
+    context.log(userState)
+    context.log(receivedMessage)
+    const response = await manageKeywordSent(receivedMessage, userState)
 
     const message = new MessagingResponse()
-    message.message(response)
+    if (typeof response === 'string') {
+        message.message(response)
+    } else {
+        message.message(response.body)
+    }
 
     // if there's a conditional (like not recording all messages), put that here
-    if (sentMessage.isQuestion) {
-        storeMessage(sentMessage, curUserState.currMessage)
+    if (receivedMessage.isQuestion) {
+        storeMessage(receivedMessage, userState.currMessage)
     }
 
     context.res = {
@@ -58,20 +52,19 @@ const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Sch
     })
 }
 
-//checks if a special keyword is in the message sent
-const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState) {
-    if (specialMessageIds.has(sentMessage.Body)) {
+//checks if a special keyword is in the message received
+const manageKeywordSent = async function (receivedMessage: qs.ParsedQs, userState) {
+    if (specialMessageIds.has(receivedMessage.Body)) {
         // special message handling
-        const responseString = specialMessageIds.get(sentMessage.Body)
+        const responseString = specialMessageIds.get(receivedMessage.Body)
 
         // update curUserState depending on the specialMessageId
-        if (sentMessage.Body == 'restart') {
-            curUserState.currMessage = '6022178429efc055c8e74e50'
-            await curUserState.save()
-        } else if (sentMessage.Body == 'completed') {
+        if (receivedMessage.Body == 'restart') {
+            userState.currMessage = '6022178429efc055c8e74e50'
+            await userState.save()
+        } else if (receivedMessage.Body == 'completed') {
             // do not update userstate
-            const responseStringCompleted =
-                'You have completed ' + curUserState.moduleCompletionTime.length + ' modules.'
+            const responseStringCompleted = 'You have completed ' + userState.moduleCompletionTime.length + ' modules.'
             return responseStringCompleted
         }
 
@@ -79,8 +72,8 @@ const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState
         return responseString
     } else {
         // normal handling
-        const responseString = await formResponse(curUserState, sentMessage.Body)
-        return responseString.body
+        const response = await formResponse(userState, receivedMessage.Body)
+        return response
     }
 }
 
