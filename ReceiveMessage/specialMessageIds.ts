@@ -9,7 +9,13 @@ specialMessageIds.set(
 //checking # of completed modules
 specialMessageIds.set('completed', '')
 
-// help message that gives full list of special messages commands
-specialMessageIds.set('commands', 'Here is a list of commands: restart, completed, help')
+// message that gives full list of special messages commands
+specialMessageIds.set('commands', 'Here is a list of commands that can be used anywhere: restart, completed, help')
+
+// help for app navigation
+specialMessageIds.set('help', '')
+
+// exit by deleting user state
+specialMessageIds.set('exit', '')
 
 export default specialMessageIds

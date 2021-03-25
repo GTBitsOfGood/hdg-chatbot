@@ -22,6 +22,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     if (typeof response === 'string') {
         message.message(response)
     } else {
+        // image/multimedia functionality would go here
         message.message(response.body)
     }
 
