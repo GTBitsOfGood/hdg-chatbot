@@ -25,6 +25,7 @@ local.settings.json
 node_modules
 dist
 
+
 __blobstorage__
 __queuestorage__
 __azurite_db_blob__.json
