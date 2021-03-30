@@ -22,4 +22,4 @@ const UserStateSchema = new Schema({
     lastActivity: { type: Date },
 })
 
-export default mongoose.model<IUserState>('UserState', UserStateSchema)
+export default mongoose.model<IUserState>('UserState', UserStateSchema);

@@ -53,10 +53,10 @@ const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Sch
         response: sentMessage.Body,
     })
     userMessage.save(function (err, mes) {
-        if (err) return console.error(err)
-        console.log('Saved message to database')
-    })
-}
+        if (err) return console.error(err);
+        console.log('Saved message to database');
+    });
+};
 
 //checks if a special keyword is in the message sent
 const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState) {
@@ -82,6 +82,6 @@ const manageKeywordSent = async function (sentMessage: qs.ParsedQs, curUserState
         const responseString = await formResponse(curUserState, sentMessage.Body)
         return responseString.body
     }
-}
+};
 
 export default httpTrigger
