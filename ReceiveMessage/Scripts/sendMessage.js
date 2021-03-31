@@ -1,5 +1,6 @@
 import MongoConnect from './db'
 import ChatbotMessage from '../models/ChatbotMessage'
+import fixedMessages from '../fixedMessages'
 
 const formResponse = async function (state, message) {
     const p = state.currMessage

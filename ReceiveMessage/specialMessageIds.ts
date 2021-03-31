@@ -1,7 +1,7 @@
 import qs from 'qs'
-import UserState, { IUserState } from './models/UserState'
 import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
-import Mongoose from 'mongoose'
+import UserState, { IUserState } from './models/UserState'
+import fixedMessages from './fixedMessages'
 
 interface templateSpecialMessageHandler {
     (curUserState: IUserState): Promise<IMessage>
@@ -30,13 +30,18 @@ const completedHandler: templateSpecialMessageHandler = async function (curUserS
             numCompleted++
         }
     }
-    returnMessage.body = 'You have completed ' + numCompleted + ' modules.'
+    returnMessage.body = (await fixedMessages.get('num modules')).body + numCompleted
     return returnMessage
 }
 
 // mostly for testing purposes
 const currentHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
     return ChatbotMessage.findById(curUserState.currMessage)
+}
+
+const deleteHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
+    UserState.deleteOne({ userId: curUserState.userId })
+    return fixedMessages.get('complete exit message')
 }
 
 const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], templateSpecialMessageHandler> = new Map<
@@ -48,5 +53,6 @@ specialMessageIds.set('restart', restartHandler)
 specialMessageIds.set('commands', commandsHandler)
 specialMessageIds.set('completed', completedHandler)
 specialMessageIds.set('current', currentHandler)
+specialMessageIds.set('delete', deleteHandler)
 
 export default specialMessageIds
