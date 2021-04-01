@@ -24,7 +24,7 @@ const commandsHandler: templateSpecialMessageHandler = async function (curUserSt
 }
 
 const helpHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
-    return fixedMessages.get('help')
+    return fixedMessages.get('helpme')
 }
 
 const completedHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
