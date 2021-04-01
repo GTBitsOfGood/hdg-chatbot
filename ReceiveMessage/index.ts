@@ -17,8 +17,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     context.log('HTTP trigger function processed a request.')
     const receivedMessage = qs.parse(req.body)
 
-    const userState = await getUserState(req)
-    const response = await manageKeywordSent(receivedMessage, userState, req) // returns IMessage
+    const curUserState = await getUserState(req)
+    const response = await manageKeywordSent(receivedMessage, curUserState, req) // returns IMessage
 
     const message = new MessagingResponse()
     const messageContent = message.message('')
@@ -32,8 +32,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // if there's a conditional (like not recording all messages), put that here
     // make sure user has consented to data storage
     // make sure curUserState is not null
-    if (userState && userState.dataConsent && receivedMessage.messageType == 'question') {
-        storeMessage(receivedMessage, userState.currMessage)
+    if (curUserState && curUserState.dataConsent && receivedMessage.messageType == 'question') {
+        storeMessage(receivedMessage, curUserState.currMessage)
     }
     context.log(message.toString())
 
