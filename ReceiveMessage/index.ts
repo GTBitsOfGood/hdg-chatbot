@@ -71,7 +71,7 @@ const manageKeywordSent = async function (
     if (!curUserState && msg == sentMessage.Body) {
         //new user that consents
         const messageId = Mongoose.Types.ObjectId('60563903ea9f2e441461118c') //points to data consent question
-        const newUser = new UserState({ userId: body.From, dataConsent: false, currMessage: messageId })
+        const newUser = new UserState({ userId: body.From, dataConsent: true, lowData: false, currMessage: messageId })
         await newUser.save()
 
         const returnMessage = new ChatbotMessage()

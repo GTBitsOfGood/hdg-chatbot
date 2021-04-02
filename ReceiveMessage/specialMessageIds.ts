@@ -39,6 +39,46 @@ const currentHandler: templateSpecialMessageHandler = async function (curUserSta
     return ChatbotMessage.findById(curUserState.currMessage)
 }
 
+const yesDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    const returnMessage = new ChatbotMessage()
+
+    curUserState.dataConsent = true;
+    await curUserState.save()
+
+    returnMessage.body = 'You have consented to Data Collection.';
+    return returnMessage;
+}
+
+const noDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    const returnMessage = new ChatbotMessage()
+
+    curUserState.dataConsent = false;
+    await curUserState.save()
+
+    returnMessage.body = 'You have opted out of Data Collection.';
+    return returnMessage;
+}
+
+const yesLowDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    const returnMessage = new ChatbotMessage()
+
+    curUserState.lowData = true;
+    await curUserState.save()
+
+    returnMessage.body = 'You have turned on Low Data Mode.';
+    return returnMessage;
+}
+
+const noLowDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    const returnMessage = new ChatbotMessage()
+
+    curUserState.lowData = false;
+    await curUserState.save()
+
+    returnMessage.body = 'You have turned off Low Data Mode.';
+    return returnMessage;
+}
+
 const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], templateSpecialMessageHandler> = new Map<
     string | qs.ParsedQs | string[] | qs.ParsedQs[],
     templateSpecialMessageHandler
@@ -48,5 +88,9 @@ specialMessageIds.set('restart', restartHandler)
 specialMessageIds.set('commands', commandsHandler)
 specialMessageIds.set('completed', completedHandler)
 specialMessageIds.set('current', currentHandler)
+specialMessageIds.set('yes data', yesDataHandler)
+specialMessageIds.set('no data', noDataHandler)
+specialMessageIds.set('turn on low data', yesLowDataHandler)
+specialMessageIds.set('turn off low data', noLowDataHandler)
 
 export default specialMessageIds
