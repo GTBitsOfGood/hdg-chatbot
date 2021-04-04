@@ -15,10 +15,10 @@ const MessagingResponse = twilio.twiml.MessagingResponse
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     context.log('HTTP trigger function processed a request.')
-    const sentMessage = qs.parse(req.body)
+    const receivedMessage = qs.parse(req.body)
 
     const curUserState = await getUserState(req)
-    const response = await manageKeywordSent(sentMessage, curUserState, req) // returns IMessage
+    const response = await manageKeywordSent(receivedMessage, curUserState, req) // returns IMessage
 
     const message = new MessagingResponse()
     const messageContent = message.message('')
@@ -32,8 +32,8 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // if there's a conditional (like not recording all messages), put that here
     // make sure user has consented to data storage
     // make sure curUserState is not null
-    if (curUserState && curUserState.dataConsent && sentMessage.messageType == 'question') {
-        storeMessage(sentMessage, curUserState.currMessage)
+    if (curUserState && curUserState.dataConsent && receivedMessage.messageType == 'question') {
+        storeMessage(receivedMessage, curUserState.currMessage)
     }
     context.log(message.toString())
 

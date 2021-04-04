@@ -1,6 +1,7 @@
 import qs from 'qs'
 import UserState, { IUserState } from './models/UserState'
 import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
+import fixedMessages from './fixedMessages'
 import Mongoose from 'mongoose'
 
 interface templateSpecialMessageHandler {
@@ -20,6 +21,10 @@ const commandsHandler: templateSpecialMessageHandler = async function (curUserSt
     const returnMessage = new ChatbotMessage()
     returnMessage.body = 'Here is a list of commands: restart, completed, help'
     return returnMessage
+}
+
+const helpHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
+    return fixedMessages.get('helpme')
 }
 
 const completedHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
@@ -46,6 +51,7 @@ const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], te
 
 specialMessageIds.set('restart', restartHandler)
 specialMessageIds.set('commands', commandsHandler)
+specialMessageIds.set('helpme', helpHandler)
 specialMessageIds.set('completed', completedHandler)
 specialMessageIds.set('current', currentHandler)
 
