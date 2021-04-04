@@ -6,6 +6,7 @@ export interface IUserState extends Document {
     currMessage: IMessage['_id']
     lowData: boolean
     moduleCompletionTime: Array<Date>
+    dataConsent: boolean
     lastActivity: Date
 }
 
@@ -19,7 +20,8 @@ const UserStateSchema = new Schema({
     },
     lowData: { type: Boolean },
     moduleCompletionTime: { type: [Date], default: [null, null, null, null, null] },
+    dataConsent: { type: Boolean, required: true },
     lastActivity: { type: Date },
 })
 
-export default mongoose.model<IUserState>('UserState', UserStateSchema)
+export default mongoose.model<IUserState>('UserState', UserStateSchema);
