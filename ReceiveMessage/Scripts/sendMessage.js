@@ -1,17 +1,18 @@
 import MongoConnect from './db'
 import ChatbotMessage from '../models/ChatbotMessage'
+import fixedMessages from '../fixedMessages'
 
-const formResponse = async function (userState, receivedMessage) {
+const formResponse = async function (userState, message) {
     const currMessageId = userState.currMessage
     if (currMessageId == null) {
-        userState.currMessage = '6022178429efc055c8e74e50'
+        userState.currMessage = fixedMessages.get('welcome')
     }
     await MongoConnect()
     const currMessage = await ChatbotMessage.findById(currMessageId)
     const nextMessages = currMessage.nextMessages
     let nextMessageId = nextMessages.get(nextMessages.size > 1 ? receivedMessage : 'default')
     if (nextMessageId == null) {
-        nextMessageId = '6022178429efc055c8e74e50' //change this to whatever error message we want to send (for now it is welcome message)
+        return fixedMessages.get('error message')
     }
     userState.currMessage = nextMessageId
     userState.save()

@@ -22,7 +22,12 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     const message = new MessagingResponse()
     const messageContent = message.message('')
-    messageContent.body(response.body)
+    if (response.messageType == 'message' || response.messageType == 'final-message') {
+        // append short message to tell the user how to advance in the chatbot
+        messageContent.body(response.body + '\nSend anything to go to the next message.')
+    } else {
+        messageContent.body(response.body)
+    }
 
     context.log(response)
     if (response.image && response.image != '') {
@@ -32,7 +37,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // if there's a conditional (like not recording all messages), put that here
     // make sure user has consented to data storage
     // make sure curUserState is not null
-    if (curUserState && curUserState.dataConsent && receivedMessage.messageType == 'question') {
+    // make sure the userstate has not been deleted due to complete exit special message
+    const deletedUserState = Boolean(String(receivedMessage.Body).toLowerCase() == 'complete exit message')
+    if (!deletedUserState && curUserState && curUserState.dataConsent && receivedMessage.messageType == 'question') {
         storeMessage(receivedMessage, curUserState.currMessage)
     }
     context.log(message.toString())
@@ -48,8 +55,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 }
 
 const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Schema.Types.ObjectId) {
+    const crypto = require('crypto').createHash('sha256').update(sentMessage.From).digest('hex')
     const userMessage = new MessageResponse({
-        accountID: sentMessage.From,
+        accountID: crypto,
         chatBotMessageID: curMessageID,
         response: sentMessage.Body,
     })
@@ -68,33 +76,24 @@ const manageKeywordSent = async function (
     const msg = 'i consent'
     const body = qs.parse(req.body)
 
-    if (!curUserState && msg == sentMessage.Body) {
+    if (!curUserState && msg == String(sentMessage.Body).toLowerCase()) {
         //new user that consents
-        const messageId = Mongoose.Types.ObjectId('60563903ea9f2e441461118c') //points to data consent question
+        //points to data consent question
+        const messageId = (await fixedMessages.get('datapermission'))._id
         const newUser = new UserState({ userId: body.From, dataConsent: false, currMessage: messageId })
         await newUser.save()
-
-        const returnMessage = new ChatbotMessage()
-        returnMessage.body =
-            'Thank you for consenting! if angry at data collect write "no data pls" otherwise we\'ll sneaky sneaky. respond to continue thanks'
-        return returnMessage
+        return fixedMessages.get('datapermission')
     } else if (!curUserState) {
         //new user that hasn't consented
-        const returnMessage = new ChatbotMessage()
-        returnMessage.body =
-            'Doth thee consent to receiving messages from this numb\'r.  Replyeth with "i consent" if \'t be true thee doth'
-        return returnMessage
-    } else if (specialMessageIds.has(sentMessage.Body)) {
+        return fixedMessages.get('messagepermission')
+    } else if (specialMessageIds.has(String(sentMessage.Body).toLowerCase())) {
         // special message handling
-        const responseHandler = specialMessageIds.get(sentMessage.Body)
+        const responseHandler = specialMessageIds.get(String(sentMessage.Body).toLowerCase())
         const responseString = responseHandler(curUserState)
         return responseString
-    } else if (fixedMessages.has(sentMessage.Body)) {
-        // fixed message handling
-        return fixedMessages.get(sentMessage.Body)
     } else {
         // normal handling
-        const responseString = await formResponse(curUserState, sentMessage.Body)
+        const responseString = await formResponse(curUserState, String(sentMessage.Body).toLowerCase())
         return responseString
     }
 }
