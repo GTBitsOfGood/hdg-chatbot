@@ -55,12 +55,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 }
 
 const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Schema.Types.ObjectId) {
-    const crypto = require('crypto')
-    const mykey = crypto.createCipher('aes-128-cbc', sentMessage.From)
-    let mystr = mykey.update('abc', 'utf8', 'hex')
-    mystr += mykey.final('hex')
+    const crypto = require('crypto').createHash('sha256').update(sentMessage.From).digest('hex')
     const userMessage = new MessageResponse({
-        accountID: mystr,
+        accountID: crypto,
         chatBotMessageID: curMessageID,
         response: sentMessage.Body,
     })
