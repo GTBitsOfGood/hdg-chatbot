@@ -95,9 +95,13 @@ const messageCompletedUsers = async function (date: Date) {
                 return x || x >= 0
             })
 
+        sendCompletedMessage(user, user.userId, twoMonths.toDateString(), modules, user.lowData)
+
+        /*
         modules.forEach(mod => {
-            // sendCompletedMessage(user.userId, twoMonths.toDateString(), mod, user.lowData)
+            sendCompletedMessage(user, user.userId, twoMonths.toDateString(), modules, user.lowData)
         });
+        */
         //not sure how to save cur userState if we potentially have two completed modules
 
         /*
