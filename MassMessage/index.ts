@@ -5,6 +5,8 @@ import UserState from '../ReceiveMessage/models/UserState'
 import MongoConnect from '../ReceiveMessage/Scripts/db'
 
 import { sendCompletedMessage, sendInactiveMessage } from './Scripts/sendMessage'
+import fixedMessages from '../ReceiveMessage/fixedMessages'
+
 
 //the timer is currently set to run everyday at our 9AM (10AM in guatemala), can be changed in function.json
 const timerTrigger: AzureFunction = async function (context: Context, myTimer: any): Promise<void> {
@@ -46,10 +48,10 @@ const messageInactiveUsers = async function (date: Date) {
             $gte: twoWeeks
         }
     })
-    allUsers.forEach((user) => {
+    allUsers.forEach(async (user) => {
         //sendInactiveMessage(user.userId, twoWeeks.toDateString(), user.lowData)
         //hardcoded to welcome message
-        user.currMessage = Mongoose.Types.ObjectId("6022178429efc055c8e74e50");
+        user.currMessage = (await fixedMessages.get('Welcome'))._id;
         user.save((err) => {
             if (err) {
                 console.error(err);
