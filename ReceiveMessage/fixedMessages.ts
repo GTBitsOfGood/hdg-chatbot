@@ -33,5 +33,6 @@ fixedMessages.set('error message', generalHandler(4200))
 fixedMessages.set('modules completed message', generalHandler(9696))
 fixedMessages.set('complete exit message', generalHandler(1738))
 fixedMessages.set('num modules', generalHandler(4201))
+fixedMessages.set('helpme', generalHandler(950))
 
 export default fixedMessages
