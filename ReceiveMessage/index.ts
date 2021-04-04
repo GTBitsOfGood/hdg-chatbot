@@ -18,6 +18,11 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const sentMessage = qs.parse(req.body)
 
     const curUserState = await getUserState(req)
+
+    // update lastActivity
+    curUserState.lastActivity = new Date();
+    await curUserState.save();
+
     const response = await manageKeywordSent(sentMessage, curUserState, req) // returns IMessage
 
     const message = new MessagingResponse()

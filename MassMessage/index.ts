@@ -27,7 +27,7 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
 
     const inactive = await messageInactiveUsers(curDate)
     context.log(inactive);
-    const completed = await messageCompletedUsers(curDate, context)
+    const completed = await messageCompletedUsers(curDate)
     context.log(completed);
 }
 
@@ -36,9 +36,15 @@ const messageInactiveUsers = async function (date: Date) {
     //set to two weeks ago
     const twoWeeks = new Date(date);
     twoWeeks.setDate(twoWeeks.getDate() - 14);
+
+    const nextDay = new Date(twoWeeks)
+    nextDay.setDate(nextDay.getDate() + 1)
     
     const allUsers = await UserState.find({
-        lastActivity: twoWeeks,
+        lastActivity: {
+            $lt: nextDay,
+            $gte: twoWeeks
+        }
     })
     allUsers.forEach((user) => {
         //sendInactiveMessage(user.userId, twoWeeks.toDateString(), user.lowData)
@@ -54,25 +60,27 @@ const messageInactiveUsers = async function (date: Date) {
 }
 
 //gets users where they completed a module 2 months ago
-const messageCompletedUsers = async function (date: Date, context: Context) {
+const messageCompletedUsers = async function (date: Date) {
     //set to two months ago
     const twoMonths = new Date(date);
     twoMonths.setMonth(twoMonths.getMonth() - 2);
 
-    const prevDay = new Date(twoMonths)
-    prevDay.setDate(prevDay.getDate() - 1)
-    
+    const nextDay = new Date(twoMonths)
+    nextDay.setDate(nextDay.getDate() + 1)
 
     const allUsers = await UserState.find({
         moduleCompletionTime: {
-            $gt: prevDay,
-            $lt: twoMonths,
+            $elemMatch: {
+                $lt: nextDay,
+                $gte: twoMonths
+            }
         },
     })
+    
     allUsers.forEach((user) => {
         const modules = user.moduleCompletionTime
             .map((time, index) => {
-                if (time >= prevDay && time < twoMonths) {
+                if (time >= twoMonths && time < nextDay) {
                     // module was completed 2 months ago
                     return index
                 } else {
@@ -84,14 +92,24 @@ const messageCompletedUsers = async function (date: Date, context: Context) {
                 // 0 is also falsy so we need the second check to make sure any match at index 0 goes through
                 return x || x >= 0
             })
-        if (modules === undefined) {
-            sendInactiveMessage(user.userId, twoMonths.toDateString(), user.lowData)
-            //hardcoded to welcome message
-            user.currMessage = Mongoose.Types.ObjectId("6022178429efc055c8e74e50")
-        } else {
-            sendCompletedMessage(user.userId, twoMonths.toDateString(), modules, user.lowData)
-        }
-    })
+
+        modules.forEach(mod => {
+            // sendCompletedMessage(user.userId, twoMonths.toDateString(), mod, user.lowData)
+        });
+        //not sure how to save cur userState if we potentially have two completed modules
+
+        /*
+        // can't hardcode at the moment but would be here
+        // user.currMessage = Mongoose.Types.ObjectId("????");
+        user.currMessage = Mongoose.Types.ObjectId("6022178429efc055c8e74e52");
+        user.save((err) => {
+            if (err) {
+                console.error(err);
+            }
+        })
+        */
+    });
+    
     return allUsers;
 }
 
