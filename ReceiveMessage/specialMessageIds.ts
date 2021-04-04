@@ -2,24 +2,21 @@ import qs from 'qs'
 import UserState, { IUserState } from './models/UserState'
 import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
 import Mongoose from 'mongoose'
+import fixedMessages from './fixedMessages'
 
 interface templateSpecialMessageHandler {
     (curUserState: IUserState): Promise<IMessage>
 }
 
 const restartHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
-    curUserState.currMessage = '6022178429efc055c8e74e50'
+    curUserState.currMessage = (await fixedMessages.get('Welcome'))._id
     await curUserState.save()
-    const returnMessage = new ChatbotMessage()
-    returnMessage.body =
-        '(Welcome Message) What would you like to learn about? 1. (emoji) Exercise - brief description2. (emoji) WASH- brief description3. (emoji) Nutrition-brief description4. (emoji) Maternal Infant Care-brief description5. (emoji) Mental Health- brief description'
-    return returnMessage
+
+    return fixedMessages.get('Welcome');
 }
 
 const commandsHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
-    const returnMessage = new ChatbotMessage()
-    returnMessage.body = 'Here is a list of commands: restart, completed, help'
-    return returnMessage
+    return fixedMessages.get('commands');
 }
 
 const completedHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
@@ -40,43 +37,31 @@ const currentHandler: templateSpecialMessageHandler = async function (curUserSta
 }
 
 const yesDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
-    const returnMessage = new ChatbotMessage()
-
     curUserState.dataConsent = true;
     await curUserState.save()
 
-    returnMessage.body = 'You have consented to Data Collection.';
-    return returnMessage;
+    return fixedMessages.get('yesDataCollection');
 }
 
 const noDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
-    const returnMessage = new ChatbotMessage()
-
     curUserState.dataConsent = false;
     await curUserState.save()
 
-    returnMessage.body = 'You have opted out of Data Collection.';
-    return returnMessage;
+    return fixedMessages.get('noDataCollection');
 }
 
 const yesLowDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
-    const returnMessage = new ChatbotMessage()
-
     curUserState.lowData = true;
     await curUserState.save()
 
-    returnMessage.body = 'You have turned on Low Data Mode.';
-    return returnMessage;
+    return fixedMessages.get('TurnOnLowData');
 }
 
 const noLowDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
-    const returnMessage = new ChatbotMessage()
-
     curUserState.lowData = false;
     await curUserState.save()
 
-    returnMessage.body = 'You have turned off Low Data Mode.';
-    return returnMessage;
+    return fixedMessages.get('TurnOffLowData');
 }
 
 const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], templateSpecialMessageHandler> = new Map<
