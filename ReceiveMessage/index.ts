@@ -81,6 +81,7 @@ const manageKeywordSent = async function (
         //points to data consent question
         const messageId = (await fixedMessages.get('datapermission'))._id
         const newUser = new UserState({ userId: body.From, dataConsent: false, currMessage: messageId })
+        
         await newUser.save()
         return fixedMessages.get('datapermission')
     } else if (!curUserState) {

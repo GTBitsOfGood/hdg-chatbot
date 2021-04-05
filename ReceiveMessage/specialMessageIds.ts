@@ -3,24 +3,21 @@ import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
 import UserState, { IUserState } from './models/UserState'
 import fixedMessages from './fixedMessages'
 import Mongoose from 'mongoose'
+import fixedMessages from './fixedMessages'
 
 interface templateSpecialMessageHandler {
     (curUserState: IUserState): Promise<IMessage>
 }
 
 const restartHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
-    curUserState.currMessage = '6022178429efc055c8e74e50'
+    curUserState.currMessage = (await fixedMessages.get('Welcome'))._id
     await curUserState.save()
-    const returnMessage = new ChatbotMessage()
-    returnMessage.body =
-        '(Welcome Message) What would you like to learn about? 1. (emoji) Exercise - brief description2. (emoji) WASH- brief description3. (emoji) Nutrition-brief description4. (emoji) Maternal Infant Care-brief description5. (emoji) Mental Health- brief description'
-    return returnMessage
+
+    return fixedMessages.get('welcome');
 }
 
 const commandsHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
-    const returnMessage = new ChatbotMessage()
-    returnMessage.body = 'Here is a list of commands: restart, completed, help'
-    return returnMessage
+    return fixedMessages.get('commands');
 }
 
 const helpHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
@@ -44,6 +41,34 @@ const currentHandler: templateSpecialMessageHandler = async function (curUserSta
     return ChatbotMessage.findById(curUserState.currMessage)
 }
 
+const yesDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    curUserState.dataConsent = true;
+    await curUserState.save()
+
+    return fixedMessages.get('yesDataCollection');
+}
+
+const noDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    curUserState.dataConsent = false;
+    await curUserState.save()
+
+    return fixedMessages.get('noDataCollection');
+}
+
+const yesLowDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    curUserState.lowData = true;
+    await curUserState.save()
+
+    return fixedMessages.get('TurnOnLowData');
+}
+
+const noLowDataHandler: templateSpecialMessageHandler = async function (curUserState:IUserState): Promise<IMessage> {
+    curUserState.lowData = false;
+    await curUserState.save()
+
+    return fixedMessages.get('TurnOffLowData');
+}
+
 const deleteHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
     UserState.deleteOne({ userId: curUserState.userId })
     return fixedMessages.get('complete exit message')
@@ -59,6 +84,10 @@ specialMessageIds.set('commands', commandsHandler)
 specialMessageIds.set('helpme', helpHandler)
 specialMessageIds.set('completed', completedHandler)
 specialMessageIds.set('current', currentHandler)
+specialMessageIds.set('yes data', yesDataHandler)
+specialMessageIds.set('no data', noDataHandler)
+specialMessageIds.set('turn on low data', yesLowDataHandler)
+specialMessageIds.set('turn off low data', noLowDataHandler)
 specialMessageIds.set('delete', deleteHandler)
 
 export default specialMessageIds
