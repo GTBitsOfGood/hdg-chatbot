@@ -1,6 +1,7 @@
 import qs from 'qs'
-import UserState, { IUserState } from './models/UserState'
 import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
+import UserState, { IUserState } from './models/UserState'
+import fixedMessages from './fixedMessages'
 import Mongoose from 'mongoose'
 import fixedMessages from './fixedMessages'
 
@@ -12,11 +13,15 @@ const restartHandler: templateSpecialMessageHandler = async function (curUserSta
     curUserState.currMessage = (await fixedMessages.get('Welcome'))._id
     await curUserState.save()
 
-    return fixedMessages.get('Welcome');
+    return fixedMessages.get('welcome');
 }
 
 const commandsHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
     return fixedMessages.get('commands');
+}
+
+const helpHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
+    return fixedMessages.get('helpme')
 }
 
 const completedHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
@@ -27,7 +32,7 @@ const completedHandler: templateSpecialMessageHandler = async function (curUserS
             numCompleted++
         }
     }
-    returnMessage.body = 'You have completed ' + numCompleted + ' modules.'
+    returnMessage.body = (await fixedMessages.get('num modules')).body + numCompleted
     return returnMessage
 }
 
@@ -64,6 +69,11 @@ const noLowDataHandler: templateSpecialMessageHandler = async function (curUserS
     return fixedMessages.get('TurnOffLowData');
 }
 
+const deleteHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
+    UserState.deleteOne({ userId: curUserState.userId })
+    return fixedMessages.get('complete exit message')
+}
+
 const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], templateSpecialMessageHandler> = new Map<
     string | qs.ParsedQs | string[] | qs.ParsedQs[],
     templateSpecialMessageHandler
@@ -71,11 +81,13 @@ const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], te
 
 specialMessageIds.set('restart', restartHandler)
 specialMessageIds.set('commands', commandsHandler)
+specialMessageIds.set('helpme', helpHandler)
 specialMessageIds.set('completed', completedHandler)
 specialMessageIds.set('current', currentHandler)
 specialMessageIds.set('yes data', yesDataHandler)
 specialMessageIds.set('no data', noDataHandler)
 specialMessageIds.set('turn on low data', yesLowDataHandler)
 specialMessageIds.set('turn off low data', noLowDataHandler)
+specialMessageIds.set('delete', deleteHandler)
 
 export default specialMessageIds
