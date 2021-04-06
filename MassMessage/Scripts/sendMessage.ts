@@ -14,7 +14,7 @@ const client = require('twilio')(accountSid, authToken)
 //will need to update functions when phone number is not directly stored
 //another update for when multimedia messages get added, current both temporary string placeholders
 
-export const sendCompletedMessage = async function (user: typeof UserState, id: string, date: string, modules: Array<number>, lowData: boolean) {
+export const sendCompletedMessage = async function (user: IUserState, id: string, date: string, modules: Array<number>, lowData: boolean) {
     await MongoConnect();
 
     const message = lowData ? `Hi but on low data, you completed module(s) ${modules.join()} on ${date}. Pls respond.` 
@@ -24,10 +24,18 @@ export const sendCompletedMessage = async function (user: typeof UserState, id: 
 
     user.currMessage = message;
 
+    user.save((err) => {
+        if (err) {
+            console.error(err);
+        }
+    })
+
     await sendDiagnosticQuizzes(user, id, modules, lowData);
+
+    
 }
 
-export const sendDiagnosticQuizzes = async function (user: typeof UserState, id: string, modules: Array<number>, lowData: boolean) {
+export const sendDiagnosticQuizzes = async function (user: IUserState, id: string, modules: Array<number>, lowData: boolean) {
     await MongoConnect();
     
     const start = lowData ? `Sending you diagnostic quizzes for the modules you have completed.` 
@@ -54,13 +62,19 @@ export const sendDiagnosticQuizzes = async function (user: typeof UserState, id:
                 key = "Mental Health Diagnostic";
                 break;
             default:
-                key = "Welcome";
+                key = "Inactivity";
                 break;
         }
         const quiz = fixedMessages.get(key)
 
         await client.messages.create({ body: quiz, from: '+13159300241', to: id })
         user.currMessage = quiz;
+
+        user.save((err) => {
+            if (err) {
+                console.error(err);
+            }
+        })
     })
 
 }

@@ -18,6 +18,7 @@ const fixedMessages: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], Promis
 fixedMessages.set('MessagePermission', generalHandler(-1))
 fixedMessages.set('DataPermission', generalHandler(0))
 fixedMessages.set('Welcome', generalHandler(1))
+fixedMessages.set('Inactivity', generalHandler(78))
 fixedMessages.set('ModuleOne', generalHandler(100))
 fixedMessages.set('ModuleTwo', generalHandler(200))
 fixedMessages.set('ModuleThree', generalHandler(300))
