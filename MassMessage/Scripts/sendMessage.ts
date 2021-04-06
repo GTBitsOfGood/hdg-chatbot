@@ -20,9 +20,9 @@ export const sendCompletedMessage = async function (user: IUserState, id: string
     const message = lowData ? `Hi but on low data, you completed module(s) ${modules.join()} on ${date}. Pls respond.` 
         : `Hi, you completed module(s) ${modules.join()} on ${date}. Pls respond.`;
 
-    await client.messages.create({ body: message, from: '+13159300241', to: id })
+    let m = await client.messages.create({ body: message, from: '+13159300241', to: id })
 
-    user.currMessage = message;
+    user.currMessage = m;
 
     user.save((err) => {
         if (err) {
@@ -31,7 +31,6 @@ export const sendCompletedMessage = async function (user: IUserState, id: string
     })
 
     await sendDiagnosticQuizzes(user, id, modules, lowData);
-
     
 }
 
@@ -69,12 +68,12 @@ export const sendDiagnosticQuizzes = async function (user: IUserState, id: strin
 
         await client.messages.create({ body: quiz, from: '+13159300241', to: id })
         user.currMessage = quiz;
+    })
 
-        user.save((err) => {
-            if (err) {
-                console.error(err);
-            }
-        })
+    user.save((err) => {
+        if (err) {
+            console.error(err);
+        }
     })
 
 }
@@ -82,8 +81,7 @@ export const sendDiagnosticQuizzes = async function (user: IUserState, id: strin
 export const sendInactiveMessage = async function (id: string, date: string, lowData: boolean) {
     await MongoConnect();
 
-    const message = lowData ? `Hi but on low data, you haven't had any activity since ${date}. Pls respond.` 
-    : `Hi, you haven't had any activity since ${date}. Pls respond.`;
+    const message = fixedMessages.get("Inactivity");
 
     await client.messages.create({ body: message, from: '+13159300241', to: id })
 }
