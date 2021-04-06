@@ -20,18 +20,9 @@ export const sendCompletedMessage = async function (user: IUserState, id: string
     const message = lowData ? `Hi but on low data, you completed module(s) ${modules.join()} on ${date}. Pls respond.` 
         : `Hi, you completed module(s) ${modules.join()} on ${date}. Pls respond.`;
 
-    let m = await client.messages.create({ body: message, from: '+13159300241', to: id })
-
-    user.currMessage = m;
-
-    user.save((err) => {
-        if (err) {
-            console.error(err);
-        }
-    })
+    await client.messages.create({ body: message, from: '+13159300241', to: id })
 
     await sendDiagnosticQuizzes(user, id, modules, lowData);
-    
 }
 
 export const sendDiagnosticQuizzes = async function (user: IUserState, id: string, modules: Array<number>, lowData: boolean) {
