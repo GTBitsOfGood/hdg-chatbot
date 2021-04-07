@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document } from 'mongoose'
 import { IMessage } from './ChatbotMessage'
 
+
 export interface IUserState extends Document {
     userId: string
     currMessage: IMessage['_id']
@@ -19,9 +20,9 @@ const UserStateSchema = new Schema({
         default: '6022178429efc055c8e74e50',
     },
     lowData: { type: Boolean },
-    moduleCompletionTime: { type: Array, default: [null, null, null, null, null] },
+    moduleCompletionTime: { type: [Date], default: [null, null, null, null, null] },
     dataConsent: { type: Boolean, required: true },
     lastActivity: { type: Date },
 })
 
-export default mongoose.model<IUserState>('UserState', UserStateSchema)
+export default mongoose.model<IUserState>('UserState', UserStateSchema);

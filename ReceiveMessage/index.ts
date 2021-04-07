@@ -18,6 +18,10 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const receivedMessage = qs.parse(req.body)
 
     const curUserState = await getUserState(req)
+    // update lastActivity
+    curUserState.lastActivity = new Date()
+    await curUserState.save()
+
     const response = await manageKeywordSent(receivedMessage, curUserState, req) // returns IMessage
 
     const message = new MessagingResponse()
@@ -81,7 +85,7 @@ const manageKeywordSent = async function (
         //points to data consent question
         const messageId = (await fixedMessages.get('datapermission'))._id
         const newUser = new UserState({ userId: body.From, dataConsent: false, currMessage: messageId })
-        
+
         await newUser.save()
         return fixedMessages.get('datapermission')
     } else if (!curUserState) {
