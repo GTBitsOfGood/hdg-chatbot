@@ -8,7 +8,7 @@ interface templateSpecialMessageHandler {
 }
 
 const restartHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
-    curUserState.currMessage = (await fixedMessages.get('Welcome'))._id
+    curUserState.currMessage = (await fixedMessages.get('welcome'))._id
     await curUserState.save()
 
     return fixedMessages.get('welcome')

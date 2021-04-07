@@ -10,7 +10,7 @@ const formResponse = async function (userState, message) {
     await MongoConnect()
     const currMessage = await ChatbotMessage.findById(currMessageId)
     const nextMessages = currMessage.nextMessages
-    let nextMessageId = nextMessages.get(nextMessages.size > 1 ? receivedMessage : 'default')
+    let nextMessageId = nextMessages.get(nextMessages.size > 1 ? message : 'default')
     if (nextMessageId == null) {
         return fixedMessages.get('error message')
     }
