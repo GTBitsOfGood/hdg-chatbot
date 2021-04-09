@@ -1,8 +1,10 @@
-import MongoConnect from './db'
-import ChatbotMessage from '../models/ChatbotMessage'
+import MongoConnect from '../../db'
+import ChatbotMessage, { IMessage } from '../../models/ChatbotMessage'
 import fixedMessages from '../fixedMessages'
 
-const formResponse = async function (userState, message) {
+import { IUserState } from '../../models/UserState'
+
+const formResponse = async function (userState : IUserState, message : string) : Promise<IMessage>{
     const currMessageId = userState.currMessage
     if (currMessageId == null) {
         userState.currMessage = fixedMessages.get('welcome')

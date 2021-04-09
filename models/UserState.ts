@@ -21,7 +21,7 @@ const UserStateSchema = new Schema({
     },
     lowData: { type: Boolean },
     moduleCompletionTime: { type: [Date], default: [null, null, null, null, null] },
-    dataConsent: { type: Boolean, required: true },
+    dataConsent: { type: Boolean, required: true},
     lastActivity: { type: Date },
 })
 

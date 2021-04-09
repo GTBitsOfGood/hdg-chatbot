@@ -1,5 +1,5 @@
-import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
-import db from './Scripts/db'
+import ChatbotMessage, { IMessage } from '../models/ChatbotMessage'
+import db from '../db'
 
 interface templateFixedMessageHandler {
     (messageId: number): Promise<IMessage>

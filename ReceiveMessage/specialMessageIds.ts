@@ -1,6 +1,6 @@
 import qs from 'qs'
-import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
-import UserState, { IUserState } from './models/UserState'
+import ChatbotMessage, { IMessage } from '../models/ChatbotMessage'
+import UserState, { IUserState } from '../models/UserState'
 import fixedMessages from './fixedMessages'
 
 interface templateSpecialMessageHandler {

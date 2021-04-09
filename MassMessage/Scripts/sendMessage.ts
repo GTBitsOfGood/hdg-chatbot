@@ -1,9 +1,9 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions'
 import * as twilio from 'twilio'
 import qs from 'qs'
-import { IUserState } from '../../ReceiveMessage/models/UserState'
-import UserState from '../../ReceiveMessage/models/UserState'
-import MongoConnect from '../../ReceiveMessage/Scripts/db'
+import { IUserState } from '../../models/UserState'
+import UserState from '../../models/UserState'
+import MongoConnect from '../../db'
 import fixedMessages from '../../ReceiveMessage/fixedMessages'
 
 const MessagingResponse = twilio.twiml.MessagingResponse

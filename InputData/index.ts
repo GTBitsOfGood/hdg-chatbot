@@ -1,7 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions'
-import Mongo from '../ReceiveMessage/Scripts/db'
+import Mongo from '../db'
 import xlsxFile from 'read-excel-file/node'
-import ChatbotMessage, { IMessage } from '../ReceiveMessage/models/ChatbotMessage'
+import ChatbotMessage, { IMessage } from '../models/ChatbotMessage'
 
 type MessageToBeCreated = {
     record: IMessage
