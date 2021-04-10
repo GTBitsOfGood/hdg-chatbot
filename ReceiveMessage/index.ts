@@ -2,13 +2,13 @@ import { AzureFunction, Context, HttpRequest } from '@azure/functions'
 import * as twilio from 'twilio'
 import qs from 'qs'
 import getUserState from './Scripts/readRequest'
-import MessageResponse from './models/MessageResponse'
+import MessageResponse from '../models/MessageResponse'
 import { Schema } from 'mongoose'
 import formResponse from './Scripts/sendMessage'
-import UserState, { IUserState } from './models/UserState'
+import UserState, { IUserState } from '../models/UserState'
 import specialMessageIds from './specialMessageIds'
 import fixedMessages from './fixedMessages'
-import ChatbotMessage, { IMessage } from './models/ChatbotMessage'
+import ChatbotMessage, { IMessage } from '../models/ChatbotMessage'
 import Mongoose from 'mongoose'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
@@ -18,9 +18,13 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const receivedMessage = qs.parse(req.body)
 
     const curUserState = await getUserState(req)
-    // update lastActivity
-    curUserState.lastActivity = new Date()
-    await curUserState.save()
+
+    // only update if userstate exists
+    if (curUserState != null) {
+        // update lastActivity
+        curUserState.lastActivity = new Date()
+        await curUserState.save()
+    }
 
     const response = await manageKeywordSent(receivedMessage, curUserState, req) // returns IMessage
 
@@ -84,7 +88,7 @@ const manageKeywordSent = async function (
         //new user that consents
         //points to data consent question
         const messageId = (await fixedMessages.get('datapermission'))._id
-        const newUser = new UserState({ userId: body.From, dataConsent: false, currMessage: messageId })
+        const newUser = new UserState({ userId: body.From, dataConsent: true, currMessage: messageId, lowData: false })
 
         await newUser.save()
         return fixedMessages.get('datapermission')

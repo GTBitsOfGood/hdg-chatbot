@@ -1,8 +1,8 @@
 import { AzureFunction, Context, HttpRequest } from '@azure/functions'
 import * as twilio from 'twilio'
 import qs from 'qs'
-import MongoConnect from './db'
-import UserState from '../models/UserState'
+import MongoConnect from '../../db'
+import UserState from '../../models/UserState'
 
 //change to Promise<UserState> later
 const getUserState = async function (req: HttpRequest) {

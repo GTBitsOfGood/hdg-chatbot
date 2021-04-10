@@ -1,8 +1,8 @@
 import { AzureFunction, Context } from '@azure/functions'
 import Mongoose from 'mongoose'
 
-import UserState from '../ReceiveMessage/models/UserState'
-import MongoConnect from '../ReceiveMessage/Scripts/db'
+import UserState from '../models/UserState'
+import MongoConnect from '../db'
 
 import { sendCompletedMessage, sendInactiveMessage } from './Scripts/sendMessage'
 import fixedMessages from '../ReceiveMessage/fixedMessages'
