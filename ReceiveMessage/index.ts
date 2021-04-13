@@ -90,10 +90,10 @@ const manageKeywordSent = async function (
         const newUser = new UserState({ userId: body.From, dataConsent: true, currMessage: messageId, lowData: false })
 
         await newUser.save()
-        return await fixedMessages.get('datapermission')
+        return fixedMessages.get('datapermission')
     } else if (!curUserState) {
         //new user that hasn't consented
-        return await fixedMessages.get('messagepermission')
+        return fixedMessages.get('messagepermission')
     } else if (specialMessageIds.has(String(sentMessage.Body).toLowerCase())) {
         // special message handling
         const responseHandler = specialMessageIds.get(String(sentMessage.Body).toLowerCase())
