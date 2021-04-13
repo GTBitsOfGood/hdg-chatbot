@@ -68,7 +68,7 @@ const storeMessage = async function (sentMessage: qs.ParsedQs, curMessageID: Sch
         chatBotMessageID: curMessageID,
         response: sentMessage.Body,
     })
-    userMessage.save(function (err, mes) {
+    userMessage.save(function (err) {
         if (err) return console.error(err)
         console.log('Saved message to database')
     })

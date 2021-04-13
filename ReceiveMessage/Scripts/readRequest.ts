@@ -1,3 +1,4 @@
+import { HttpRequest } from '@azure/functions'
 import qs from 'qs'
 import MongoConnect from '../../db'
 import UserState, { IUserState } from '../../models/UserState'

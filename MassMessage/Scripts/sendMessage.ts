@@ -15,26 +15,24 @@ export const sendCompletedMessage = async function (
     id: string,
     date: string,
     modules: Array<number>,
-    lowData: boolean,
-) {
+): Promise<void> {
     await MongoConnect()
 
     //TODO: delete this message; not actually needed but nice for debugging
-    const message = lowData
-        ? `Hi but on low data, you completed module(s) ${modules.join()} on ${date}. Pls respond.`
-        : `Hi, you completed module(s) ${modules.join()} on ${date}. Pls respond.`
+    // const message = lowData
+    //     ? `Hi but on low data, you completed module(s) ${modules.join()} on ${date}. Pls respond.`
+    //     : `Hi, you completed module(s) ${modules.join()} on ${date}. Pls respond.`
 
-    await client.messages.create({ body: message, from: '+13159300241', to: id })
+    // await client.messages.create({ body: message, from: '+13159300241', to: id })
 
-    await sendDiagnosticQuizzes(user, id, modules, lowData)
+    await sendDiagnosticQuizzes(user, id, modules)
 }
 
 export const sendDiagnosticQuizzes = async function (
     user: IUserState,
     id: string,
     modules: Array<number>,
-    lowData: boolean,
-) {
+): Promise<void> {
     await MongoConnect()
 
     //deleted
@@ -81,7 +79,7 @@ export const sendDiagnosticQuizzes = async function (
     })
 }
 
-export const sendInactiveMessage = async function (id: string, date: string, lowData: boolean) {
+export const sendInactiveMessage = async function (id: string): Promise<void> {
     await MongoConnect()
     const message = await fixedMessages.get('inactivity')
 
