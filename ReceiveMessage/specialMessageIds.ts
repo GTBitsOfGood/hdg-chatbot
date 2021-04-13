@@ -79,6 +79,7 @@ const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], te
 
 specialMessageIds.set('Reiniciar', restartHandler)
 specialMessageIds.set('Posibles funciones', commandsHandler)
+//TODO: GET PROPER TRANSLATION FOR "helpme" - currently "Me ajude"
 specialMessageIds.set('Me ajude', helpHandler)
 specialMessageIds.set('Completado', completedHandler)
 specialMessageIds.set('Ultimo', currentHandler)
@@ -86,6 +87,7 @@ specialMessageIds.set('Quiero que se coleccionen datos sobre mi', yesDataHandler
 specialMessageIds.set('No quiero que se coleccionen datos sobre mi', noDataHandler)
 specialMessageIds.set('Quiero conservar datos', yesLowDataHandler)
 specialMessageIds.set('No quiero un modo de datos bajo', noLowDataHandler)
+//TODO: GET PROPER TRANSLATION FOR "delete" - currently "Excluir"
 specialMessageIds.set('Excluir', deleteHandler)
 
 export default specialMessageIds

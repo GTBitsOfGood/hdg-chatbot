@@ -80,7 +80,8 @@ const manageKeywordSent = async function (
     curUserState: IUserState,
     req: HttpRequest,
 ): Promise<IMessage> {
-    const msg = 'No quiero que se coleccionen datos sobre mi'
+    //TODO: ASK HDG FOR WHATSAPP CONSENT STRING
+    const msg = 'i consent'
     const body = qs.parse(req.body)
 
     if (!curUserState && msg == String(sentMessage.Body).toLowerCase()) {
