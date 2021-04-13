@@ -8,8 +8,7 @@ import formResponse from './Scripts/sendMessage'
 import UserState, { IUserState } from '../models/UserState'
 import specialMessageIds from './specialMessageIds'
 import fixedMessages from './fixedMessages'
-import ChatbotMessage, { IMessage } from '../models/ChatbotMessage'
-import Mongoose from 'mongoose'
+import { IMessage } from '../models/ChatbotMessage'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
 
@@ -46,7 +45,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // make sure user has consented to data storage
     // make sure curUserState is not null
     // make sure the userstate has not been deleted due to complete exit special message
-    const deletedUserState = Boolean(String(receivedMessage.Body).toLowerCase() == 'complete exit message')
+    const deletedUserState = Boolean(String(receivedMessage.Body).toLowerCase() == 'Excluir')
     if (!deletedUserState && curUserState && curUserState.dataConsent && receivedMessage.messageType == 'question') {
         storeMessage(receivedMessage, curUserState.currMessage)
     }
@@ -81,7 +80,7 @@ const manageKeywordSent = async function (
     curUserState: IUserState,
     req: HttpRequest,
 ): Promise<IMessage> {
-    const msg = 'i consent'
+    const msg = 'No quiero que se coleccionen datos sobre mi'
     const body = qs.parse(req.body)
 
     if (!curUserState && msg == String(sentMessage.Body).toLowerCase()) {
@@ -91,10 +90,10 @@ const manageKeywordSent = async function (
         const newUser = new UserState({ userId: body.From, dataConsent: true, currMessage: messageId, lowData: false })
 
         await newUser.save()
-        return fixedMessages.get('datapermission')
+        return await fixedMessages.get('datapermission')
     } else if (!curUserState) {
         //new user that hasn't consented
-        return fixedMessages.get('messagepermission')
+        return await fixedMessages.get('messagepermission')
     } else if (specialMessageIds.has(String(sentMessage.Body).toLowerCase())) {
         // special message handling
         const responseHandler = specialMessageIds.get(String(sentMessage.Body).toLowerCase())

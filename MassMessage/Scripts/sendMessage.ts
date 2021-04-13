@@ -63,8 +63,7 @@ export const sendDiagnosticQuizzes = async function (
                 key = 'mental health diagnostic'
                 break
             default:
-                //TODO: Replace with Inactivity
-                key = 'welcome'
+                key = 'inactivity'
                 break
         }
         const quiz = await fixedMessages.get(key)
@@ -82,8 +81,7 @@ export const sendDiagnosticQuizzes = async function (
 
 export const sendInactiveMessage = async function (id: string, date: string, lowData: boolean) {
     await MongoConnect()
-    //TODO: Replace with Inactivity
-    const message = await fixedMessages.get('welcome')
+    const message = await fixedMessages.get('inactivity')
 
     await client.messages.create({ body: message.body, from: '+13159300241', to: id })
 }
