@@ -8,8 +8,7 @@ import formResponse from './Scripts/sendMessage'
 import UserState, { IUserState } from '../models/UserState'
 import specialMessageIds from './specialMessageIds'
 import fixedMessages from './fixedMessages'
-import ChatbotMessage, { IMessage } from '../models/ChatbotMessage'
-import Mongoose from 'mongoose'
+import { IMessage } from '../models/ChatbotMessage'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
 
@@ -46,7 +45,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     // make sure user has consented to data storage
     // make sure curUserState is not null
     // make sure the userstate has not been deleted due to complete exit special message
-    const deletedUserState = Boolean(String(receivedMessage.Body).toLowerCase() == 'complete exit message')
+    const deletedUserState = Boolean(String(receivedMessage.Body).toLowerCase() == 'Excluir')
     if (!deletedUserState && curUserState && curUserState.dataConsent && receivedMessage.messageType == 'question') {
         storeMessage(receivedMessage, curUserState.currMessage)
     }
@@ -81,6 +80,7 @@ const manageKeywordSent = async function (
     curUserState: IUserState,
     req: HttpRequest,
 ): Promise<IMessage> {
+    //TODO: ASK HDG FOR WHATSAPP CONSENT STRING
     const msg = 'i consent'
     const body = qs.parse(req.body)
 
