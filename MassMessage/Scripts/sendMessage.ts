@@ -68,7 +68,13 @@ export const sendDiagnosticQuizzes = async function (
         }
         const quiz = await fixedMessages.get(key)
 
-        await client.messages.create({ body: quiz.body, from: '+13159300241', to: id })
+        if (id.includes('whatsapp')) {
+            //TODO: Fix the whatsapp handling, since this means that it was sent from whatsapp
+            await client.messages.create({ body: quiz.body, from: 'whatsapp:+14155238886', to: id })
+        } else {
+            //TODO: replace with actual whatsapp number
+            await client.messages.create({ body: quiz.body, from: '+13159300241', to: id })
+        }
         user.currMessage = quiz
     })
 
@@ -83,5 +89,11 @@ export const sendInactiveMessage = async function (id: string, date: string, low
     await MongoConnect()
     const message = await fixedMessages.get('inactivity')
 
-    await client.messages.create({ body: message.body, from: '+13159300241', to: id })
+    if (id.includes('whatsapp')) {
+        //TODO: Fix the whatsapp handling, since this means that it was sent from whatsapp
+        await client.messages.create({ body: message.body, from: 'whatsapp:+14155238886', to: id })
+    } else {
+        //TODO: replace with actual whatsapp number
+        await client.messages.create({ body: message.body, from: '+13159300241', to: id })
+    }
 }
