@@ -1,12 +1,8 @@
-import { AzureFunction, Context, HttpRequest } from '@azure/functions'
-import * as twilio from 'twilio'
-import qs from 'qs'
 import { IUserState } from '../../models/UserState'
-import UserState from '../../models/UserState'
 import MongoConnect from '../../db'
 import fixedMessages from '../../ReceiveMessage/fixedMessages'
+import config from '../../config'
 
-const MessagingResponse = twilio.twiml.MessagingResponse
 const accountSid = process.env.TWILIO_ACCOUNT_SID
 const authToken = process.env.TWILIO_AUTH_TOKEN
 const client = require('twilio')(accountSid, authToken)
@@ -70,10 +66,10 @@ export const sendDiagnosticQuizzes = async function (
 
         if (id.includes('whatsapp')) {
             //TODO: Fix the whatsapp handling, since this means that it was sent from whatsapp
-            await client.messages.create({ body: quiz.body, from: 'whatsapp:+14155238886', to: id })
+            await client.messages.create({ body: quiz.body, from: config.numbers.whatsapp, to: id })
         } else {
             //TODO: replace with actual whatsapp number
-            await client.messages.create({ body: quiz.body, from: '+13159300241', to: id })
+            await client.messages.create({ body: quiz.body, from: config.numbers.sms, to: id })
         }
         user.currMessage = quiz
     })
@@ -91,9 +87,9 @@ export const sendInactiveMessage = async function (id: string, date: string, low
 
     if (id.includes('whatsapp')) {
         //TODO: Fix the whatsapp handling, since this means that it was sent from whatsapp
-        await client.messages.create({ body: message.body, from: 'whatsapp:+14155238886', to: id })
+        await client.messages.create({ body: message.body, from: config.numbers.whatsapp, to: id })
     } else {
         //TODO: replace with actual whatsapp number
-        await client.messages.create({ body: message.body, from: '+13159300241', to: id })
+        await client.messages.create({ body: message.body, from: config.numbers.sms, to: id })
     }
 }

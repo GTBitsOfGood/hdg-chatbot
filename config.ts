@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config()
 
 export default {
     db: {
@@ -11,4 +11,8 @@ export default {
             useCreateIndex: true,
         },
     },
-};
+    numbers: {
+        whatsapp: process.env.WHATSAPP_NUMBER,
+        sms: process.env.SMS_NUMBER,
+    },
+}
