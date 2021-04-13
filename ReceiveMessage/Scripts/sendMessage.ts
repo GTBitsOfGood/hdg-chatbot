@@ -7,7 +7,7 @@ import { IUserState } from '../../models/UserState'
 const formResponse = async function (userState: IUserState, message: string): Promise<IMessage> {
     const currMessageId = userState.currMessage
     if (currMessageId == null) {
-        userState.currMessage = await fixedMessages.get('welcome')
+        userState.currMessage = (await fixedMessages.get('welcome'))['_id']
     }
     await MongoConnect()
     const currMessage = await ChatbotMessage.findById(currMessageId)
