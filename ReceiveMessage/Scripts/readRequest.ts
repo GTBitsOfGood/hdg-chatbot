@@ -1,9 +1,9 @@
 import qs from 'qs'
 import MongoConnect from '../../db'
-import UserState from '../../models/UserState'
+import UserState, { IUserState } from '../../models/UserState'
 
 //change to Promise<UserState> later
-const getUserState = async function (req: HttpRequest) {
+const getUserState = async function (req: HttpRequest): Promise<IUserState> {
     const body = qs.parse(req.body)
     // do necessary processing on the request (nothing at this point)
     await MongoConnect()

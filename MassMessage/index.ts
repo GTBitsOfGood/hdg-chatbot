@@ -1,5 +1,4 @@
 import { AzureFunction, Context } from '@azure/functions'
-import Mongoose from 'mongoose'
 
 import UserState from '../models/UserState'
 import MongoConnect from '../db'
@@ -48,7 +47,7 @@ const messageInactiveUsers = async function (date: Date) {
         },
     })
     allUsers.forEach(async (user) => {
-        sendInactiveMessage(user.userId, twoWeeks.toDateString(), user.lowData)
+        sendInactiveMessage(user.userId)
         //hardcoded to welcome message
         user.currMessage = (await fixedMessages.get('welcome'))._id
         user.save((err) => {
@@ -94,7 +93,7 @@ const messageCompletedUsers = async function (date: Date) {
                 return x || x >= 0
             })
 
-        sendCompletedMessage(user, user.userId, twoMonths.toDateString(), modules, user.lowData)
+        sendCompletedMessage(user, user.userId, twoMonths.toDateString(), modules)
 
         /*
         modules.forEach(mod => {
