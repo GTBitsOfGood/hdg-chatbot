@@ -38,7 +38,7 @@ jobs:
       uses: Azure/functions-action@v1
       id: fa
       with:
-        app-name: 'hdg-bot'
+        app-name: 'hdg-app'
         slot-name: 'production'
         package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_f8ad9e97441345629d12e6b0a92ff601 }}
