@@ -77,17 +77,17 @@ const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], te
     templateSpecialMessageHandler
 >()
 
-specialMessageIds.set('Reiniciar', restartHandler)
-specialMessageIds.set('Posibles funciones', commandsHandler)
+specialMessageIds.set('reiniciar', restartHandler)
+specialMessageIds.set('posibles funciones', commandsHandler)
 //TODO: GET PROPER TRANSLATION FOR "helpme" - currently "Me ajude"
-specialMessageIds.set('Me ajude', helpHandler)
-specialMessageIds.set('Completado', completedHandler)
-specialMessageIds.set('Ultimo', currentHandler)
-specialMessageIds.set('Quiero que se coleccionen datos sobre mi', yesDataHandler)
-specialMessageIds.set('No quiero que se coleccionen datos sobre mi', noDataHandler)
-specialMessageIds.set('Quiero conservar datos', yesLowDataHandler)
-specialMessageIds.set('No quiero un modo de datos bajo', noLowDataHandler)
+specialMessageIds.set('me ajude', helpHandler)
+specialMessageIds.set('completado', completedHandler)
+specialMessageIds.set('ultimo', currentHandler)
+specialMessageIds.set('quiero que se coleccionen datos sobre mi', yesDataHandler)
+specialMessageIds.set('no quiero que se coleccionen datos sobre mi', noDataHandler)
+specialMessageIds.set('quiero conservar datos', yesLowDataHandler)
+specialMessageIds.set('no quiero un modo de datos bajo', noLowDataHandler)
 //TODO: GET PROPER TRANSLATION FOR "delete" - currently "Excluir"
-specialMessageIds.set('Excluir', deleteHandler)
+specialMessageIds.set('excluir', deleteHandler)
 
 export default specialMessageIds
