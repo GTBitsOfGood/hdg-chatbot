@@ -16,7 +16,6 @@ const UserStateSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'ChatbotMessage',
         required: true,
-        default: '6022178429efc055c8e74e50',
     },
     lowData: { type: Boolean },
     moduleCompletionTime: { type: [Date], default: [null, null, null, null, null] },
