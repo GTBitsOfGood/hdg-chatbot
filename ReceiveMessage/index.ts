@@ -40,7 +40,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
 
     const message = new MessagingResponse()
     const messageContent = message.message('')
-    if (curUserState.lowData) {
+    if (curUserState && curUserState.lowData) {
         messageContent.body(response.lowData)
     } else {
         if (response.messageType == 'message' || response.messageType == 'final-message') {
