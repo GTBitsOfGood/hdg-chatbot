@@ -41,19 +41,19 @@ export const sendDiagnosticQuizzes = async function (
         //probably have to change this later but I'll keep it
         let key = ''
         switch (value) {
-            case 1:
+            case 0:
                 key = 'exercise diagnostic'
                 break
-            case 2:
+            case 1:
                 key = 'wash diagnostic'
                 break
-            case 3:
+            case 2:
                 key = 'nutrition diagnostic'
                 break
-            case 4:
+            case 3:
                 key = 'maternal infant care diagnostic'
                 break
-            case 5:
+            case 4:
                 key = 'mental health diagnostic'
                 break
             default:

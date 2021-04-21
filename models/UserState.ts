@@ -5,7 +5,7 @@ export interface IUserState extends Document {
     userId: string
     currMessage: IMessage['_id']
     lowData: boolean
-    moduleCompletionTime: Array<Date>
+    moduleCompletionTime: mongoose.Types.Array<Date>
     dataConsent: boolean
     lastActivity: Date
 }

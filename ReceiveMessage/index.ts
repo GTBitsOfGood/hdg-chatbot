@@ -20,7 +20,6 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     if (curUserState != null) {
         // update lastActivity
         curUserState.lastActivity = currTime
-        await curUserState.save()
     }
 
     // if there's a conditional (like not recording all messages), put that here
@@ -52,6 +51,15 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
         if (response.image && response.image != '') {
             messageContent.media(response.image)
         }
+    }
+    if (response.messageType == 'final-message') {
+        const moduleNumber = parseInt(response.module)
+        if (!isNaN(moduleNumber) && moduleNumber > 0) {
+            curUserState.moduleCompletionTime.set(moduleNumber - 1, currTime)
+        }
+    }
+    if (curUserState) {
+        await curUserState.save()
     }
 
     context.log(response)
@@ -101,7 +109,13 @@ const manageKeywordSent = async function (
         //new user that consents
         //points to data consent question
         const messageId = (await fixedMessages.get('datapermission'))._id
-        const newUser = new UserState({ userId: body.From, dataConsent: true, currMessage: messageId, lowData: false })
+        const newUser = new UserState({
+            userId: body.From,
+            dataConsent: true,
+            currMessage: messageId,
+            lowData: false,
+            lastActivity: Date.now(),
+        })
 
         await newUser.save()
         return fixedMessages.get('datapermission')

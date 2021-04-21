@@ -17,7 +17,6 @@ const formResponse = async function (userState: IUserState, message: string): Pr
         return await fixedMessages.get('error message')
     }
     userState.currMessage = nextMessageId
-    userState.save()
     const nextMessage = await ChatbotMessage.findById(nextMessageId)
     return nextMessage
 }
