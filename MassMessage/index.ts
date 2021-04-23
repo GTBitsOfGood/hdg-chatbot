@@ -27,6 +27,8 @@ const timerTrigger: AzureFunction = async function (context: Context, myTimer: a
 
     const completed = await messageCompletedUsers(curDate)
     const inactive = await messageInactiveUsers(curDate)
+    context.log(completed)
+    context.log(inactive)
     inactive.forEach(async (user) => {
         if (completed.has(user.userId)) return
         sendInactiveMessage(user.userId)
@@ -62,7 +64,7 @@ const messageInactiveUsers = async function (date: Date) {
 const messageCompletedUsers = async function (date: Date) {
     //set to two months ago
     const twoMonths = new Date(date)
-    twoMonths.setMonth(twoMonths.getMonth() - 2)
+    twoMonths.setDate(twoMonths.getDate() - 56)
 
     const nextDay = new Date(twoMonths)
     nextDay.setDate(nextDay.getDate() + 1)
@@ -81,13 +83,11 @@ const messageCompletedUsers = async function (date: Date) {
     allUsers.forEach((user) => {
         let module = -1
         let found = false
-        let daysIncrement = 1
         for (let i = 0; i < user.moduleCompletionTime.length; i++) {
             const time = user.moduleCompletionTime[i]
             if (time >= twoMonths && time < nextDay) {
                 if (found) {
-                    time.setDate(time.getDate() + daysIncrement)
-                    daysIncrement += 1
+                    time.setDate(time.getDate() + 1)
                     user.moduleCompletionTime.set(i, time)
                 } else {
                     module = i

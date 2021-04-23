@@ -46,7 +46,8 @@ export const sendCompletedMessage = async function (
     } else {
         await client.messages.create({ body: quiz.body, from: config.numbers.sms, to: id })
     }
-    user.currMessage = quiz
+    user.currMessage = quiz._id
+    user.save()
 }
 
 export const sendInactiveMessage = async function (id: string): Promise<void> {

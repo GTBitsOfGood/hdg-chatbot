@@ -55,7 +55,9 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     if (response.messageType == 'final-message') {
         const moduleNumber = parseInt(response.module)
         if (!isNaN(moduleNumber) && moduleNumber > 0) {
-            curUserState.moduleCompletionTime.set(moduleNumber - 1, currTime)
+            if (curUserState.moduleCompletionTime[moduleNumber - 1] == null) {
+                curUserState.moduleCompletionTime.set(moduleNumber - 1, currTime)
+            }
         }
     }
     if (curUserState) {
