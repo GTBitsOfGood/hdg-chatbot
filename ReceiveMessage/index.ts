@@ -18,10 +18,15 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const validated = twilio.validateRequest(
         config.auth_token,
         req.headers['X-Twilio-Signature'],
-        'https://hdg-app.azurewebsites.net/api/ReceiveMessage',
+        config.webhook_url,
         receivedMessage,
     )
-    if (!validated) {
+    if (config.node_env != 'development' && !validated) {
+        context.res = {
+            status: 401 /* Defaults to 200 */,
+            body: 'Unauthorized',
+            headers: { 'Content-Type': 'application/xml' },
+        }
         context.done()
         return
     }

@@ -68,7 +68,7 @@ const noLowDataHandler: templateSpecialMessageHandler = async function (curUserS
 }
 
 const deleteHandler: templateSpecialMessageHandler = async function (curUserState: IUserState): Promise<IMessage> {
-    UserState.deleteOne({ userId: curUserState.userId })
+    await UserState.deleteOne({ userId: curUserState.userId })
     return fixedMessages.get('complete exit message')
 }
 
