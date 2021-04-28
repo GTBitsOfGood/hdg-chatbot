@@ -9,11 +9,22 @@ import specialMessageIds from './specialMessageIds'
 import fixedMessages from './fixedMessages'
 import ChatbotMessage, { IMessage } from '../models/ChatbotMessage'
 import MongoConnect from '../db'
+import config from '../config'
 
 const MessagingResponse = twilio.twiml.MessagingResponse
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
     const receivedMessage = qs.parse(req.body)
+    const validated = twilio.validateRequest(
+        config.auth_token,
+        req.headers['X-Twilio-Signature'],
+        'https://hdg-app.azurewebsites.net/api/ReceiveMessage',
+        receivedMessage,
+    )
+    if (!validated) {
+        context.done()
+        return
+    }
     const curUserState = await getUserState(req)
     const currTime = new Date()
     // only update if userstate exists
