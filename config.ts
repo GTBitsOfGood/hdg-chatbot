@@ -15,4 +15,8 @@ export default {
         whatsapp: process.env.WHATSAPP_NUMBER,
         sms: process.env.SMS_NUMBER,
     },
+    account_sid: process.env.TWILIO_ACCOUNT_SID,
+    auth_token: process.env.TWILIO_AUTH_TOKEN,
+    node_env: process.env.NODE_ENV,
+    webhook_url: process.env.URL,
 }
