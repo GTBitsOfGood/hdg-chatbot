@@ -17,7 +17,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     const receivedMessage = qs.parse(req.body)
     const validated = twilio.validateRequest(
         config.auth_token,
-        req.headers['X-Twilio-Signature'],
+        req.headers['x-twilio-signature'],
         config.webhook_url,
         receivedMessage,
     )
