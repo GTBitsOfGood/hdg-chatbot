@@ -79,8 +79,8 @@ const specialMessageIds: Map<string | qs.ParsedQs | string[] | qs.ParsedQs[], te
 
 specialMessageIds.set('reiniciar', restartHandler)
 specialMessageIds.set('posibles funciones', commandsHandler)
-//TODO: GET PROPER TRANSLATION FOR "helpme" - currently "Me ajude"
-specialMessageIds.set('me ajude', helpHandler)
+//TODO: GET PROPER TRANSLATION FOR "helpme" - currently "ayuda"
+specialMessageIds.set('ayuda', helpHandler)
 specialMessageIds.set('completado', completedHandler)
 specialMessageIds.set('ultimo', currentHandler)
 specialMessageIds.set('quiero que se coleccionen datos sobre mi', yesDataHandler)

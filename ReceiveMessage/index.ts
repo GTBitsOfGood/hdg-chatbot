@@ -60,7 +60,7 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
     } else {
         if (response.messageType == 'message' || response.messageType == 'final-message') {
             // append short message to tell the user how to advance in the chatbot
-            messageContent.body(response.body + '\nSend anything to go to the next message.')
+            messageContent.body(response.body + '\nEnviar cualquier cosa para continuar.')
         } else {
             messageContent.body(response.body)
         }
@@ -120,7 +120,7 @@ const manageKeywordSent = async function (
     req: HttpRequest,
 ): Promise<IMessage> {
     //TODO: ASK HDG FOR WHATSAPP CONSENT STRING
-    const msg = 'i consent'
+    const msg = 'doy mi consentimiento'
     const body = qs.parse(req.body)
 
     if (!curUserState && msg == String(sentMessage.Body).toLowerCase()) {
